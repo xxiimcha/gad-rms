@@ -1,0 +1,786 @@
+<div class="row" *ngIf="!isLoading">
+	<div class="col-lg-12">
+		<div class="row">
+			<div class="col-lg-3 col-sm-3">
+				<mat-card class="cardWithShadow">
+					<mat-card-content class="p-24">
+						<mat-card-title>Total Barangays</mat-card-title>
+						<div class="row m-t-24">
+							<div class="col-7">
+								<h4 class="mat-headline-5" *ngIf="barangays">{{ barangays.length }}</h4>
+								<div class="d-flex align-items-center m-t-16">
+									<div class="mat-body-1 m-l-4">Barangays</div>
+								</div>
+							</div>
+						</div>
+					</mat-card-content>
+				</mat-card>
+			</div>
+			<div class="col-lg-3 col-sm-3">
+				<mat-card class="cardWithShadow">
+					<mat-card-content class="p-24">
+						<mat-card-title>Cases</mat-card-title>
+						<div class="row m-t-24">
+							<div class="col-7">
+								<h4 class="mat-headline-5"> {{ totalCases }}</h4>
+								<div class="d-flex align-items-center m-t-16">
+									<div class="mat-body-1 m-l-4">&nbsp;</div>
+								</div>
+							</div>
+						</div>
+					</mat-card-content>
+				</mat-card>
+			</div>
+			<div class="col-lg-3 col-sm-3">
+				<mat-card class="cardWithShadow">
+					<mat-card-content class="p-24">
+						<mat-card-title>VAW Cases</mat-card-title>
+						<div class="row m-t-24">
+							<div class="col-7">
+								<h4 class="mat-headline-5">{{ totalVawCaseSubmitted }}/30 </h4>
+								<div class="d-flex align-items-center m-t-16">
+									<div class="mat-body-1 m-l-4" style="cursor: pointer;" (click)="view('vaw')">View
+									</div>
+								</div>
+							</div>
+						</div>
+					</mat-card-content>
+				</mat-card>
+			</div>
+			<div class="col-lg-3 col-sm-3">
+				<mat-card class="cardWithShadow">
+					<mat-card-content class="p-24">
+						<mat-card-title>VAC Cases</mat-card-title>
+						<div class="row m-t-24">
+							<div class="col-7">
+								<h4 class="mat-headline-5">{{ totalVacCaseSubmitted }}/30 </h4>
+								<div class="d-flex align-items-center m-t-16">
+									<div class="mat-body-1 m-l-4" style="cursor: pointer;" (click)="view('vac')">View
+									</div>
+								</div>
+							</div>
+						</div>
+					</mat-card-content>
+				</mat-card>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-6">
+		<mat-card class="cardWithShadow">
+			<mat-card-content class="p-24">
+				<div class="d-flex w-100 mb-3">
+					<mat-card-title class="mb-3">Violence Against Women</mat-card-title>
+					<div class="m-l-auto">
+						<mat-form-field class="theme-select" appearance="outline">
+							<mat-select value="{{ currentMonth }}" (selectionChange)="initializeVawCasePercentage($event.value)">
+								<mat-option *ngFor="let month of months" [value]="month.value">
+									{{ month.viewValue }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+				</div>
+				<div class="row">
+					<apx-chart 
+						*ngIf="vawOverviewChart"
+						[series]="vawOverviewChart.series" 
+						[dataLabels]="vawOverviewChart.dataLabels"
+						[chart]="vawOverviewChart.chart" 
+						[labels]="vawOverviewChart.labels"
+					></apx-chart>
+				</div>
+				<!-- <div class="row">
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVaws?.sexual?.barangay !== ''">
+						<div class="card bg-pink mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVaws?.sexual?.percentage }} % Cases of Sexual Abuse</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVaws?.sexual?.barangay ?? "" }} has the highest cases of Sexual Abuse</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVaws?.sexual?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#C3B1E1'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVaws?.physical?.barangay !== ''">
+						<div class="card bg-yellow mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVaws?.physical?.percentage }} % Cases of Physical Abuse</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVaws?.physical?.barangay ?? "" }} has the highest cases of Physical Abuse</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVaws?.physical?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#A7C7E7'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVaws?.psychological?.barangay !== ''">
+						<div class="card bg-green mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVaws?.psychological?.percentage }} % Cases of Psychological Abuse</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVaws?.psychological?.barangay ?? "" }} has the highest cases of Psychological Abuse</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVaws?.psychological?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#FAC898'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVaws?.economic?.barangay !== ''">
+						<div class="card bg-purple mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVaws?.economic?.percentage }} % Cases of Economic Abuse</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVaws?.economic?.barangay ?? "" }} has the highest cases of Economic Abuse</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVaws?.economic?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#FAA0A0'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> -->
+			</mat-card-content>
+		</mat-card>
+	</div>
+	<div class="col-lg-6">
+		<mat-card class="cardWithShadow">
+			<mat-card-content class="p-24">
+				<div class="d-flex w-100 mb-3">
+					<mat-card-title class="mb-3">Violence Against Children</mat-card-title>
+					<div class="m-l-auto">
+						<mat-form-field class="theme-select" appearance="outline">
+							<mat-select value="{{ currentMonth }}" (selectionChange)="initializeVacCasePercentage($event.value)">
+								<mat-option *ngFor="let month of months" [value]="month.value">
+									{{ month.viewValue }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+				</div>
+				<div class="row">
+					<apx-chart 
+						*ngIf="vacOverviewChart"
+						[series]="vacOverviewChart.series" 
+						[dataLabels]="vacOverviewChart.dataLabels"
+						[chart]="vacOverviewChart.chart" 
+						[labels]="vacOverviewChart.labels"
+					></apx-chart>
+				</div>
+				<!-- <div class="row">
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVacs?.male?.barangay !== ''">
+						<div class="card bg-pink mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVacs?.male?.percentage }} % Cases of Male Child Abuse</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVacs?.male?.barangay ?? "" }} has the highest cases of Male Child Abuse</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVacs?.male?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#C3B1E1'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVacs?.female?.barangay !== ''">
+						<div class="card bg-yellow mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVacs?.female?.percentage }} % Cases of Female Child Abuse</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVacs?.female?.barangay ?? "" }} has the highest cases of Female Child Abuse</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVacs?.female?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#A7C7E7'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVacs?.range_one?.barangay !== ''">
+						<div class="card bg-green mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVacs?.range_one?.percentage }} % Cases of Child Abuse Ages 0-4yrs old</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVacs?.range_one?.barangay ?? "" }} has the highest cases of Child abuse from ages 0-4yrs old</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVacs?.range_one?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#FAC898'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVacs?.range_two?.barangay !== ''">
+						<div class="card bg-purple mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVacs?.range_two?.percentage }} % Cases of Child Abuse Ages 6-9yrs old</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVacs?.range_two?.barangay ?? "" }} has the highest cases of Child abuse from ages 6-9yrs old</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVacs?.range_two?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#FAA0A0'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVacs?.range_three?.barangay !== ''">
+						<div class="card bg-pink mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVacs?.range_three?.percentage }} % Cases of Child Abuse Ages 10-14yrs old</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVacs?.range_three?.barangay ?? "" }} has the highest cases of Child abuse from ages 10-14yrs old</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVacs?.range_three?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#C3B1E1'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVacs?.range_four?.barangay !== ''">
+						<div class="card bg-yellow mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVacs?.range_four?.percentage }} % Cases of Child Abuse Ages 15-17yrs old</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVacs?.range_four?.barangay ?? "" }} has the highest cases of Child abuse from ages 15-17yrs old</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVacs?.range_four?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#A7C7E7'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVacs?.range_five?.barangay !== ''">
+						<div class="card bg-green mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVacs?.range_five?.percentage }} % Cases of Child Abuse Ages 18 up PWD</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVacs?.range_five?.barangay ?? "" }} has the highest cases of Child abuse from ages 18 up PWD</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVacs?.range_one?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#FAC898'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVacs?.neglect?.barangay !== ''">
+						<div class="card bg-purple mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVacs?.neglect?.percentage }} % Cases of Neglect</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVacs?.neglect?.barangay ?? "" }} has the highest cases of Neglect</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVacs?.neglect?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#FAA0A0'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVacs?.physical_abuse?.barangay !== ''">
+						<div class="card bg-pink mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVacs?.physical_abuse?.percentage }} % Cases of Physical Abuse</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVacs?.physical_abuse?.barangay ?? "" }} has the highest cases of Physical Abuse</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVacs?.physical_abuse?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#C3B1E1'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVacs?.sexual_abuse?.barangay !== ''">
+						<div class="card bg-yellow mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVacs?.sexual_abuse?.percentage }} % Cases of Sexual Abuse</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVacs?.sexual_abuse?.barangay ?? "" }} has the highest cases of Sexual Abuse</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVacs?.sexual_abuse?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#A7C7E7'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVacs?.psychological_abuse?.barangay !== ''">
+						<div class="card bg-green mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVacs?.psychological_abuse?.percentage }} % Cases of Psychological Abuse</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVacs?.psychological_abuse?.barangay ?? "" }} has the highest cases of Psychological Abuse</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVacs?.psychological_abuse?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#FAC898'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-sm-3" *ngIf="percentageVacs?.others?.barangay !== ''">
+						<div class="card bg-purple mb-3">
+							<div class="card-header">
+								<h6 class="card-title">{{ percentageVacs?.neglect?.percentage }} % Cases of Others</h6>
+							</div>
+							<div class="card-body">
+								<p class="card-text">Barangay {{ percentageVacs?.others?.barangay ?? "" }} has the highest cases of Others</p>
+								<div class="d-flex justify-content-center">
+									<circle-progress
+										[percent]="percentageVacs?.others?.percentage ?? 0"
+										[radius]="80"
+										[animationDuration]="300"
+										[backgroundColor]="'#FAA0A0'"
+										[outerStrokeGradient]="false"
+										[outerStrokeColor]="'#FFFFFF'"
+										[innerStrokeColor]="'#FFFFFF'"
+										[titleColor]="'#483500'"
+										[unitsColor]="'#483500'"
+										[showSubtitle]="false"
+									></circle-progress>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> -->
+			</mat-card-content>
+		</mat-card>
+	</div>
+	<div class="col-lg-12">
+		<mat-card class="cardWithShadow">
+			<mat-card-content class="p-24">
+				<div class="d-flex w-100">
+					<div class="m-l-auto" *ngIf="currentUserRole === 'super admin'">
+						<mat-form-field class="theme-select" appearance="outline">
+							<mat-select [(ngModel)]="currentBarangay" (selectionChange)="onBarangayVawChange($event)">
+								<mat-option value="All">All</mat-option>
+								<mat-option *ngFor="let brgy of barangays" [value]="brgy.name">
+									{{ brgy.name }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+					<div class="m-l-auto" *ngIf="currentUserRole !== 'super admin'">
+						{{ currentBarangay }}
+					</div>
+				</div>
+				<div class="d-flex w-100">
+					<div class="m-l-auto">
+						<div class="m-l-auto">
+							<mat-radio-group [(ngModel)]="selectedVawReportType" (change)="onReportTypeVawChange($event)">
+								<mat-radio-button *ngFor="let type of reportType" [value]="type">
+									{{ type }}
+								</mat-radio-button>
+							</mat-radio-group>
+						</div>
+					</div>
+				</div>
+				<div class="d-flex w-100" *ngIf="selectedVawReportType === 'Year'">
+					<mat-card-title>This Year's Violence Against Women Cases</mat-card-title>
+				</div>
+				<div class="d-flex w-100" *ngIf="selectedVawReportType === 'Monthly'">
+					<mat-card-title>Monthly Violence Against Women Cases</mat-card-title>
+					<div class="m-l-auto">
+						<mat-form-field class="theme-select" appearance="outline">
+							<mat-select value="{{ currentMonth }}"
+								(selectionChange)="initializeMonthlyVawChart($event.value)">
+								<mat-option *ngFor="let month of months" [value]="month.value">
+									{{ month.viewValue }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+				</div>
+				<div class="d-flex w-100" *ngIf="selectedVawReportType === 'Quarterly'">
+					<mat-card-title>Quarterly Violence Against Women Cases</mat-card-title>
+					<div class="m-l-auto">
+						<mat-form-field class="theme-select" appearance="outline">
+							<mat-select value="Q1" (selectionChange)="initializeQuarterlyVawChart($event.value)">
+								<mat-option *ngFor="let q of quarterNames" [value]="q">
+									{{ q }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+				</div>
+				<apx-chart *ngIf="vawOverviewBarChart && selectedVawReportType === 'Year'"
+					[series]="vawOverviewBarChart.series" [dataLabels]="vawOverviewBarChart.dataLabels"
+					[chart]="vawOverviewBarChart.chart" [legend]="vawOverviewBarChart.legend"
+					[xaxis]="vawOverviewBarChart.xaxis" [yaxis]="vawOverviewBarChart.yaxis"
+					[grid]="vawOverviewBarChart.grid" [stroke]="vawOverviewBarChart.stroke"
+					[tooltip]="vawOverviewBarChart.tooltip" [plotOptions]="vawOverviewBarChart.plotOptions"></apx-chart>
+				<apx-chart *ngIf="vawOverviewBarChartMonthly && selectedVawReportType === 'Monthly'"
+					[series]="vawOverviewBarChartMonthly.series" [dataLabels]="vawOverviewBarChartMonthly.dataLabels"
+					[chart]="vawOverviewBarChartMonthly.chart" [legend]="vawOverviewBarChartMonthly.legend"
+					[xaxis]="vawOverviewBarChartMonthly.xaxis" [yaxis]="vawOverviewBarChartMonthly.yaxis"
+					[grid]="vawOverviewBarChartMonthly.grid" [stroke]="vawOverviewBarChartMonthly.stroke"
+					[tooltip]="vawOverviewBarChartMonthly.tooltip"
+					[plotOptions]="vawOverviewBarChartMonthly.plotOptions"></apx-chart>
+				<apx-chart *ngIf="vawOverviewBarChartQuarterly && selectedVawReportType === 'Quarterly'"
+					[series]="vawOverviewBarChartQuarterly.series" [dataLabels]="vawOverviewBarChartQuarterly.dataLabels"
+					[chart]="vawOverviewBarChartQuarterly.chart" [legend]="vawOverviewBarChartQuarterly.legend"
+					[xaxis]="vawOverviewBarChartQuarterly.xaxis" [yaxis]="vawOverviewBarChartQuarterly.yaxis"
+					[grid]="vawOverviewBarChartQuarterly.grid" [stroke]="vawOverviewBarChartQuarterly.stroke"
+					[tooltip]="vawOverviewBarChartQuarterly.tooltip"
+					[plotOptions]="vawOverviewBarChartQuarterly.plotOptions"></apx-chart>
+			</mat-card-content>
+		</mat-card>
+	</div>
+	<div class="col-lg-12">
+		<mat-card class="cardWithShadow">
+			<mat-card-content class="p-24">
+				<div class="d-flex w-100">
+					<div class="m-l-auto" *ngIf="currentUserRole === 'super admin'">
+						<mat-form-field class="theme-select" appearance="outline">
+							<mat-select [(ngModel)]="currentBarangay" (selectionChange)="onBarangayVacChange($event)">
+								<mat-option value="All">All</mat-option>
+								<mat-option *ngFor="let brgy of barangays" [value]="brgy.name">
+									{{ brgy.name }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+					<div class="m-l-auto" *ngIf="currentUserRole !== 'super admin'">
+						{{ currentBarangay }}
+					</div>
+				</div>
+				<div class="d-flex w-100">
+					<div class="m-l-auto">
+						<div class="m-l-auto">
+							<mat-radio-group [(ngModel)]="selectedVacReportType" (change)="onReportTypeVacChange($event)">
+								<mat-radio-button *ngFor="let type of reportType" [value]="type">
+									{{ type }}
+								</mat-radio-button>
+							</mat-radio-group>
+						</div>
+					</div>
+				</div>
+				<div class="d-flex w-100" *ngIf="selectedVacReportType === 'Year'">
+					<mat-card-title>This Year's Violence Against Children Cases</mat-card-title>
+				</div>
+				<div class="d-flex w-100" *ngIf="selectedVacReportType === 'Monthly'">
+					<mat-card-title>Monthly Violence Against Children Cases</mat-card-title>
+					<div class="m-l-auto">
+						<mat-form-field class="theme-select" appearance="outline">
+							<mat-select value="{{ currentMonth }}"
+								(selectionChange)="initializeMonthlyVacChart($event.value)">
+								<mat-option *ngFor="let month of months" [value]="month.value">
+									{{ month.viewValue }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+				</div>
+				<div class="d-flex w-100" *ngIf="selectedVacReportType === 'Quarterly'">
+					<mat-card-title>Quarterly Violence Against Children Cases</mat-card-title>
+					<div class="m-l-auto">
+						<mat-form-field class="theme-select" appearance="outline">
+							<mat-select value="Q1" (selectionChange)="initializeQuarterlyVacChart($event.value)">
+								<mat-option *ngFor="let q of quarterNames" [value]="q">
+									{{ q }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+				</div>
+				<apx-chart *ngIf="vacOverviewBarChart && selectedVacReportType === 'Year'"
+					[series]="vacOverviewBarChart.series" [dataLabels]="vacOverviewBarChart.dataLabels"
+					[chart]="vacOverviewBarChart.chart" [legend]="vacOverviewBarChart.legend"
+					[xaxis]="vacOverviewBarChart.xaxis" [yaxis]="vacOverviewBarChart.yaxis"
+					[grid]="vacOverviewBarChart.grid" [stroke]="vacOverviewBarChart.stroke"
+					[tooltip]="vacOverviewBarChart.tooltip" [plotOptions]="vacOverviewBarChart.plotOptions"></apx-chart>
+				<apx-chart *ngIf="vacOverviewBarChartMonthly && selectedVacReportType === 'Monthly'"
+					[series]="vacOverviewBarChartMonthly.series" [dataLabels]="vacOverviewBarChartMonthly.dataLabels"
+					[chart]="vacOverviewBarChartMonthly.chart" [legend]="vacOverviewBarChartMonthly.legend"
+					[xaxis]="vacOverviewBarChartMonthly.xaxis" [yaxis]="vacOverviewBarChartMonthly.yaxis"
+					[grid]="vacOverviewBarChartMonthly.grid" [stroke]="vacOverviewBarChartMonthly.stroke"
+					[tooltip]="vacOverviewBarChartMonthly.tooltip"
+					[plotOptions]="vacOverviewBarChartMonthly.plotOptions"></apx-chart>
+				<apx-chart *ngIf="vacOverviewBarChartQuarterly && selectedVacReportType === 'Quarterly'"
+					[series]="vacOverviewBarChartQuarterly.series" [dataLabels]="vacOverviewBarChartQuarterly.dataLabels"
+					[chart]="vacOverviewBarChartQuarterly.chart" [legend]="vacOverviewBarChartQuarterly.legend"
+					[xaxis]="vacOverviewBarChartQuarterly.xaxis" [yaxis]="vacOverviewBarChartQuarterly.yaxis"
+					[grid]="vacOverviewBarChartQuarterly.grid" [stroke]="vacOverviewBarChartQuarterly.stroke"
+					[tooltip]="vacOverviewBarChartQuarterly.tooltip"
+					[plotOptions]="vacOverviewBarChartQuarterly.plotOptions"></apx-chart>
+			</mat-card-content>
+		</mat-card>
+	</div>
+
+	<div class="col-lg-12">
+		<mat-card class="cardWithShadow">
+			<mat-card-content class="p-24">
+				<div class="d-flex w-100">
+					<mat-form-field class="theme-select" appearance="outline">
+						<mat-select [(ngModel)]="currentBarangay" (selectionChange)="fetchVawAnalysis()">
+							<mat-option value="All">All</mat-option>
+							<mat-option *ngFor="let brgy of barangays" [value]="brgy.name">
+								{{ brgy.name }}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
+				</div>
+	
+				<div class="d-flex w-100 align-items-center justify-content-between">
+					<button mat-button (click)="previousMonth()" [disabled]="currentMonthIndex === 0">
+						Previous
+					</button>
+					<mat-card-title>{{ getCurrentMonth() }} Violence Against Women Prescriptive Analysis</mat-card-title>
+					<button mat-button (click)="nextMonth()" [disabled]="currentMonthIndex === uniqueMonths.length - 1">
+						Next
+					</button>
+				</div>
+				<div class="p-24">
+					<div *ngIf="vawAnalysis.length > 0; else noData">
+						
+						<div *ngFor="let recommendation of getVawRecommendationsByMonth(uniqueMonths[currentMonthIndex])">
+							<mat-card class="mb-3">
+								<mat-card-header>
+									<mat-card-title>Barangay: {{ recommendation.barangay }}</mat-card-title>
+								</mat-card-header>
+								<mat-card-content>
+									<p>Case Type: {{ recommendation.case_type }}</p>
+									<p>Number of Cases: {{ recommendation.case_count }}</p>
+									<p>Recommended Action: {{ recommendation.recommended_action }}</p>
+								</mat-card-content>
+							</mat-card>
+						</div>
+					</div>
+					<ng-template #noData>
+						<p>No data available for predictive analysis.</p>
+					</ng-template>
+				</div>
+			</mat-card-content>
+		</mat-card>
+	</div>
+	
+	<div class="col-lg-12">
+    <mat-card class="cardWithShadow">
+        <mat-card-content class="p-24">
+            <div class="d-flex w-100">
+                <div class="m-l-auto" *ngIf="currentUserRole === 'super admin'">
+                    <mat-form-field class="theme-select" appearance="outline">
+                        <mat-select [(ngModel)]="currentBarangay" (selectionChange)="onBarangayVacChange($event)">
+                            <mat-option value="All">All</mat-option>
+                            <mat-option *ngFor="let brgy of barangays" [value]="brgy.name">
+                                {{ brgy.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="m-l-auto" *ngIf="currentUserRole !== 'super admin'">
+                    {{ currentBarangay }}
+                </div>
+            </div>
+            <div class="d-flex w-100 align-items-center justify-content-between">
+                <button mat-button (click)="previousMonth()" [disabled]="currentMonthIndex === 0">
+                    Previous
+                </button>
+                <mat-card-title>{{ getCurrentMonth() }} Violence Against Children Prescriptive Analysis</mat-card-title>
+                <button mat-button (click)="nextMonth()" [disabled]="currentMonthIndex === uniqueMonths.length - 1">
+                    Next
+                </button>
+            </div>
+            <div class="p-24">
+                <div *ngIf="prescriptiveAnalysis.length > 0; else noData">
+                    <div *ngIf="getRecommendationsByMonth(getCurrentMonth()).length > 0; else noDataForMonth">
+                        <div *ngFor="let recommendation of getRecommendationsByMonth(getCurrentMonth())">
+                            <mat-card class="mb-3">
+                                <mat-card-header>
+                                    <mat-card-title>Barangay: {{ recommendation.barangay }}</mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <p>Case Type: {{ recommendation.case_type }}</p>
+                                    <p>Number of Cases: {{ recommendation.case_count }}</p>
+                                    <p>Recommended Action: {{ recommendation.recommended_action }}</p>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                    <ng-template #noDataForMonth>
+                        <p>No data available for {{ getCurrentMonth() }}.</p>
+                    </ng-template>
+                </div>
+                <ng-template #noData>
+                    <p>No data available for prescriptive analysis.</p>
+                </ng-template>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+</div>
+<div class="b-t-1 p-0 full-screen-container" *ngIf="isLoading">
+	<div class="mat-elevation-z8">
+		<div class="row">
+			<div class="col">
+				<mat-spinner></mat-spinner>
+			</div>
+		</div>
+	</div>
+</div>

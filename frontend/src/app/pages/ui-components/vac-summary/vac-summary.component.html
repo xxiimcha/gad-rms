@@ -1,0 +1,130 @@
+<mat-card class="cardWithShadow theme-card">
+	<mat-card-header class="d-flex justify-content-center">
+		<mat-card-title class="m-b-0">Violence Against Children</mat-card-title>
+	</mat-card-header>
+	<mat-card-content class="b-t-1 p-0" *ngIf="barangayName != ''">
+		<div class="col p-2 d-flex justify-content-end">
+			<button type="button" class="btn btn-primary btn-rounded btn-sm fw-bold" (click)="exportToExcel()">
+				Export to Excel
+			</button>
+		</div>
+		<table id="dataTable" mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+			<ng-container matColumnDef="firstLevelHeader">
+				<th mat-header-cell *matHeaderCellDef [attr.colspan]="17" class="center-header" style="background-color: #FFBF00;">
+					Barangay {{ barangayName }} {{ currentYear }}
+				</th>
+			</ng-container>
+			<ng-container matColumnDef="blank-header">
+				<th mat-header-cell *matHeaderCellDef style="background-color: #FBCEB1;"> &nbsp; </th>
+			</ng-container>
+			<ng-container matColumnDef="total-vac-case">
+				<th mat-header-cell *matHeaderCellDef [attr.colspan]="6" class="center-header" style="background-color: #FBCEB1;"> Total VAC Cases </th>
+			</ng-container>
+			<ng-container matColumnDef="total-cases-acted">
+				<th mat-header-cell *matHeaderCellDef [attr.colspan]="5" class="center-header" style="background-color: #FBCEB1;"> Total Cases Acted Upon </th>
+			</ng-container>
+			<ng-container matColumnDef="restorative">
+				<th mat-header-cell *matHeaderCellDef [attr.colspan]="5" class="center-header" style="background-color: #FBCEB1;"> Restorative Program</th>
+			</ng-container>
+
+			<ng-container matColumnDef="Month">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header" > Month </th>
+				<td mat-cell *matCellDef="let element"> {{element.month}} </td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> Total </td>
+			</ng-container>
+
+			<ng-container matColumnDef="No Of Cases">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> No. of Cases </th>
+				<td mat-cell *matCellDef="let element"> {{element.number_vaw}} </td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('number_vac')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Physical Abuse">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Physical Abuse </th>
+				<td mat-cell *matCellDef="let element">{{ element.physical_abuse }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('physical_abuse')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Sexual Abuse">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Sexual Abuse </th>
+				<td mat-cell *matCellDef="let element">{{ element.sexual_abuse }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('sexual_abuse')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Psychological Abuse">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Psychological Abuse </th>
+				<td mat-cell *matCellDef="let element">{{ element.psychological_abuse }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('psychological_abuse')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Neglect">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Neglect </th>
+				<td mat-cell *matCellDef="let element">{{ element.neglect }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('neglect')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Others">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Others </th>
+				<td mat-cell *matCellDef="let element">{{ element.others }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('others')}} </td>
+			</ng-container>
+
+
+			<ng-container matColumnDef="Referred to PNP">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Referred to PNP </th>
+				<td mat-cell *matCellDef="let element">{{ element.referred_pnp }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('referred_pnp')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Referred to NBI">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Referred to NBI </th>
+				<td mat-cell *matCellDef="let element">{{ element.referred_nbi }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('referred_nbi')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Referred to Medical">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Referred for Medical Treatment </th>
+				<td mat-cell *matCellDef="let element">{{ element.referred_medical }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('referred_medical')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Referred to Legal">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Referred for Legal Assitance </th>
+				<td mat-cell *matCellDef="let element">{{ element.referred_legal_assist }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('referred_legal_assist')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Referred to Others">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Others: (NGO, GBOS) </th>
+				<td mat-cell *matCellDef="let element">{{ element.referred_others }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('referred_others')}} </td>
+			</ng-container>
+
+
+			<ng-container matColumnDef="Trainings">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Trainings/Seminars </th>
+				<td mat-cell *matCellDef="let element">{{ element.trainings }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('trainings')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Counseling">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Counseling(If the brgy have counseling program) </th>
+				<td mat-cell *matCellDef="let element">{{ element.counseling }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('counseling')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Iec">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> IEC </th>
+				<td mat-cell *matCellDef="let element">{{ element.iec }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('iec')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Fund Allocation">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Fund Allocation </th>
+				<td mat-cell *matCellDef="let element">{{ element.fund_allocation }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> {{getTotalCases('fund_allocation')}} </td>
+			</ng-container>
+			<ng-container matColumnDef="Remarks">
+				<th mat-header-cell *matHeaderCellDef class="rotated-header"> Remarks </th>
+				<td mat-cell *matCellDef="let element">{{ element.remarks }}</td>
+				<td mat-footer-cell *matFooterCellDef style="background-color: #FFFF8F;"> &nbsp; </td>
+			</ng-container>
+
+			<tr mat-header-row *matHeaderRowDef="['firstLevelHeader'];"></tr>
+			<tr mat-header-row *matHeaderRowDef="['blank-header', 'total-vac-case', 'total-cases-acted', 'restorative']"></tr>
+			<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+			<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+			<tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+
+		</table>
+
+	</mat-card-content>
+</mat-card>

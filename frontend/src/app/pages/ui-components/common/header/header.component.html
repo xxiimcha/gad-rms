@@ -1,0 +1,39 @@
+<mat-toolbar class="topbar">
+	<button mat-icon-button (click)="toggleMobileNav.emit()" *ngIf="!showToggle">
+		<i-tabler name="menu-2" class="icon-20 d-flex"></i-tabler>
+	</button>
+	<span class="flex-1-auto" *ngIf="barangayName" style="color: white;">{{ superAdmin ? "Pasig City GAD" : "Barangay "
+		+ barangayName }}</span>
+	<button mat-icon-button aria-label="Notifications" [matMenuTriggerFor]="matMenu">
+		<i-tabler class="d-flex" name="bell" matBadge="{{ notificationList.length }}" matBadgeColor="primary"
+			style="color: white;"></i-tabler>
+	</button>
+	<button mat-icon-button aria-label="Logout" (click)="logout()">
+		<i-tabler class="d-flex" name="arrow-left-from-arc" style="color: white;"></i-tabler>
+	</button>
+	<mat-menu #matMenu="matMenu" class="topbar-dd cardWithShadow">
+		<ng-container *ngIf="notificationList.length; else noNotifications">
+			<button mat-menu-item *ngFor="let notification of notificationList; let i = index;"
+				(click)="openNotification(notification)">
+				<div *ngIf="!notification.deadline">
+					{{ i + 1 }}.
+					{{ notification.status === 'Submitted'
+					? (notification.type + ' Case ' + notification.status + ' by barangay ' + notification.barangay)
+					: notification.status === 'Received'
+					? (notification.type + ' Case ' + notification.status + ' by GAD')
+					: null
+					}}
+				</div>
+				<!-- Display the deadline message -->
+				<span *ngIf="notification.deadline">
+					<ng-container *ngIf="isToday(notification.deadline)">Deadline of Case Submission is today</ng-container>
+					<ng-container *ngIf="isInThreeDays(notification.deadline)">Deadline of Case Submission is in 3 days</ng-container>
+					<ng-container *ngIf="isInTwoDays(notification.deadline)">Deadline of Case Submission is in 2 days</ng-container>
+				</span>
+			</button>
+		</ng-container>
+		<ng-template #noNotifications>
+			<span>No notifications</span>
+		</ng-template>
+	</mat-menu>
+</mat-toolbar>

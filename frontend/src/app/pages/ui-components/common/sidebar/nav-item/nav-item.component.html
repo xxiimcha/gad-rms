@@ -1,0 +1,4 @@
+<a mat-list-item *ngIf="shouldDisplayItem(item)" (click)="onItemSelected(item)" [ngClass]="{ 'mat-toolbar mat-primary activeMenu': item.route ? router.isActive(item.route, true) : false }" class="menu-list-item">
+    <i-tabler class="routeIcon" name="{{ item.iconName }}" matListItemIcon style="color: white;"></i-tabler>
+    <span class="hide-menu" style="color: white;">{{ item.displayName }}</span>
+</a>

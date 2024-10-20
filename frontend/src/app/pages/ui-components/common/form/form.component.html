@@ -1,0 +1,68 @@
+<div class="card-body b-t-1 p-0">
+    <form [formGroup]="profileForm" (ngSubmit)="submitProfile()">
+        <div class="p-3 form-group">
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label [ngClass]="{'text-danger': profileForm.touched && profileForm.get('first_name')!.invalid, 'text-success': profileForm.touched && profileForm.get('first_name')!.valid}">First Name</label>
+                        <input type="text" formControlName="first_name" class="form-control"
+                            [ngClass]="{'is-invalid': profileForm.get('first_name')?.touched && profileForm.get('first_name')?.invalid}">
+                        <div *ngIf="profileForm.get('first_name')!.hasError('required')" class="invalid-feedback">
+                            This field is required
+                        </div>
+                    </div>
+                </div>					
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Last Name</label>
+                        <input type="text" formControlName="last_name" class="form-control">
+                    </div>						
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="position" class="form-label">Position</label>
+                <input type="text" formControlName="position" class="form-control">
+            </div>		
+            <div class="mb-3">
+                <label [ngClass]="{'text-danger': profileForm.touched && profileForm.get('email')!.invalid, 'text-success': profileForm.touched && profileForm.get('email')!.valid}">Email</label>
+                <input type="email" formControlName="email" class="form-control" [ngClass]="{'is-invalid': profileForm.touched && profileForm.get('email')!.invalid, 'is-valid': profileForm.touched && profileForm.get('email')!.valid}">
+                <div *ngIf="profileForm.get('email')!.errors" class="invalid-feedback">Please enter a valid email address</div>
+                <div *ngIf="profileForm.get('email')!.hasError('required')" class="invalid-feedback">This field is required</div>
+            </div>
+            <div class="mb-3">
+                <label for="address_line_1" class="form-label">Address</label>
+                <input type="text" formControlName="address_line_1" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="contact_number" class="form-label">Contact Number</label>
+                <input type="tel" formControlName="contact_number" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="city" class="form-label">City</label>
+                <select class="form-select" aria-label="Default select example" id="city" name="city" formControlName="city" (change)="filterBarangays()">
+                    <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="city" class="form-label">Barangay</label>
+                <select class="form-select" aria-label="Default select example" id="barangay" name="barangay" formControlName="barangay">
+                    <option *ngFor="let brgy of barangays" [value]="brgy.id">{{ brgy.name }}</option>
+                </select>
+            </div>
+            <div class="mb-3" *ngIf="isSuperAdmin">
+                <label for="city" class="form-label">Role</label>
+                <select class="form-select" aria-label="Default select example" id="role" name="role" formControlName="role">
+                    <option value="super admin">super admin</option>
+                    <option value="admin">admin</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" formControlName="password" class="form-control">
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary m-1" [disabled]="!profileForm.valid">Save</button>
+            </div>
+        </div>
+    </form>
+</div>

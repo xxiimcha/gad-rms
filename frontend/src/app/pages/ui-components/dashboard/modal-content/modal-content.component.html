@@ -1,0 +1,13 @@
+<div class="modal-header">
+    <h4 class="modal-title mt-0">List of Barangays that has not submitted cases</h4>
+</div>
+<div class="modal-body">
+    <div class="card-body" style="overflow-x: auto !important; max-height: 300px;">
+        <div class="row">
+            <p *ngFor="let data of dataList">{{ data.barangay }}</p>
+        </div>
+    </div>
+</div>
+<div class="modal-footer p-0">
+    <button type="button" class="btn btn-outline-dark m-1" (click)="cancelAction()">Cancel</button>
+</div>

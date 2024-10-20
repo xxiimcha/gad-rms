@@ -1,0 +1,39 @@
+<section class="vh-100 bg-light d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6 col-xl-4">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <img src="/assets/images/logos/gad-logo.png" class="img-fluid mb-3" alt="Logo" style="width: 80px;">
+                            <h5 class="text-primary">Welcome Back</h5>
+                            <p class="text-muted">Please login to your account</p>
+                        </div>
+                        <form [formGroup]="credentialsForm" (ngSubmit)="login()">
+                            <div data-mdb-input-init class="form-outline mb-4">
+                                <label class="form-label"
+                                    [ngClass]="{'text-danger': credentialsForm.touched && credentialsForm.get('email')!.invalid, 'text-success': credentialsForm.touched && credentialsForm.get('email')!.valid}">
+                                    Email
+                                </label>
+                                <input type="email" formControlName="email" class="form-control"
+                                    [ngClass]="{'is-invalid': credentialsForm.touched && credentialsForm.get('email')!.invalid, 'is-valid': credentialsForm.touched && credentialsForm.get('email')!.valid}"
+                                    placeholder="Enter Email Address">
+                                <div *ngIf="credentialsForm.get('email')!.errors" class="invalid-feedback">Please enter a valid email address</div>
+                            </div>
+                            <div class="form-outline mb-3">
+                                <label class="form-label"
+                                    [ngClass]="{'text-danger': credentialsForm.get('password')?.touched && credentialsForm.get('password')?.invalid}">
+                                    Password
+                                </label>
+                                <input type="password" formControlName="password" class="form-control"
+                                    [ngClass]="{'is-invalid': credentialsForm.get('password')?.touched && credentialsForm.get('password')?.invalid, 'is-valid': credentialsForm.get('password')?.touched && credentialsForm.get('password')?.valid}"
+                                    placeholder="Enter Password">
+                                <div *ngIf="credentialsForm.get('password')!.hasError('required')" class="invalid-feedback">This field is required</div>
+                            </div>
+
+                            <!-- Error message for unauthorized login -->
+                            <div class="alert alert-danger mt-3" role="alert" *ngIf="loginError">
+                                Invalid email or password. Please try again.
+                            </div>
+
+                         

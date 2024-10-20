@@ -1,0 +1,36 @@
+table {
+    width: 100%;
+}
+
+th.mat-header-cell, td.mat-cell {
+    text-align: center;
+    border: 1px solid #CCC;
+    padding: 0 !important;
+}
+.center-header {
+    text-align: center;
+}
+
+.rotated-header {
+    // writing-mode: vertical-rl;
+    // transform: rotate(180deg);
+    white-space: normal;
+    text-align: center;
+    // height: 250px;
+}
+td {
+    font-size: 12px !important;
+    text-align: center;
+}
+.full-screen-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+}

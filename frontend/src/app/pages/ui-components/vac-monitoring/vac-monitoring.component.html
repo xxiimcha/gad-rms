@@ -1,0 +1,176 @@
+<div class="card cardWithShadow theme-card" style="width: fit-content;">
+	<div class="col p-2 d-flex justify-content-end">
+		<div class="m-l-auto">
+			<mat-form-field class="theme-select" appearance="outline">
+				<mat-select value="{{ currentMonth }}" (selectionChange)="initializeMonthly($event.value)">
+					<mat-option *ngFor="let month of months" [value]="month.value">
+						{{ month.viewValue }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+		</div>
+		<button type="button" class="btn btn-primary btn-rounded btn-sm fw-bold" (click)="exportToExcel()" *ngIf="superAdmin">
+			Export to Excel
+		</button>
+	</div>
+	
+	<div class="card-body b-t-1 p-0" *ngIf="dateRange && !isLoading">
+		<div class="mat-elevation-z8">
+			<table id="dataTable" mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+				<ng-container matColumnDef="firstLevelHeader">
+					<th mat-header-cell *matHeaderCellDef [attr.colspan]="27" class="center-header">
+						MONITORING OF INCIDENCE ON VIOLENCE AGAINST CHILDREN (VAC)<br>
+						For the Period of {{ dateRange }}<br>
+						National Capital Region
+					</th>
+				</ng-container>
+				<ng-container matColumnDef="blank-header">
+					<th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="rotated-header" style="background-color: #F0D0C9;"> &nbsp; </th>
+				</ng-container>
+				<ng-container matColumnDef="vaw-victims">
+					<th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="center-header" style="background-color: #F9ECEC;"> Gender </th>
+				</ng-container>
+				<ng-container matColumnDef="age-header">
+					<th mat-header-cell *matHeaderCellDef [attr.colspan]="5" class="center-header" style="background-color: #ADA0DE;"> Age </th>
+				</ng-container>
+				<ng-container matColumnDef="gender-header">
+					<th mat-header-cell *matHeaderCellDef [attr.colspan]="5"  class="center-header" style="background-color: #F9ECEC;"> Type of Violence </th>
+				</ng-container>
+				<ng-container matColumnDef="perpetrators">
+					<th mat-header-cell *matHeaderCellDef [attr.colspan]="7"  class="rotated-header" style="background-color: #F9ECEC;"> Perpetrators </th>
+				</ng-container>
+				<ng-container matColumnDef="actions-taken">
+					<th mat-header-cell *matHeaderCellDef [attr.colspan]="6" class="rotated-header" style="background-color: #F9ECEC;"> Actions Taken by the Barangay </th>
+				</ng-container>
+
+				<ng-container matColumnDef="barangay-header">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #F0D0C9;"> Barangay </th>
+					<td mat-cell *matCellDef="let element"> {{element.barangay}} </td>
+				</ng-container>
+				<ng-container matColumnDef="No Of Cases">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header"  style="background-color: #F0D0C9;"> Total No. of Victims </th>
+					<td mat-cell *matCellDef="let element"> {{element.number_vac}} </td>
+				</ng-container>
+
+				<ng-container matColumnDef="Male">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0D1DE;"> Male </th>
+					<td mat-cell *matCellDef="let element">{{ element.male }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Female">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0D1DE;"> Female </th>
+					<td mat-cell *matCellDef="let element">{{ element.female }}</td>
+				</ng-container>
+
+				<ng-container matColumnDef="range_one">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #ADA0DE;"> 0-4yr </th>
+					<td mat-cell *matCellDef="let element">{{ element.range_one }}</td>
+				</ng-container>
+				<ng-container matColumnDef="range_two">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #ADA0DE;"> 6-9yr </th>
+					<td mat-cell *matCellDef="let element">{{ element.range_two }}</td>
+				</ng-container>
+				<ng-container matColumnDef="range_three">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #ADA0DE;"> 10-14yr </th>
+					<td mat-cell *matCellDef="let element">{{ element.range_three }}</td>
+				</ng-container>
+				<ng-container matColumnDef="range_four">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #ADA0DE;"> 15-17yr </th>
+					<td mat-cell *matCellDef="let element">{{ element.range_four }}</td>
+				</ng-container>
+				<ng-container matColumnDef="range_five">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #ADA0DE;"> 18 up PWD </th>
+					<td mat-cell *matCellDef="let element">{{ element.range_five }}</td>
+				</ng-container>
+
+				<ng-container matColumnDef="Physical Abuse">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0DED2;"> Physical Abuse </th>
+					<td mat-cell *matCellDef="let element">{{ element.physical_abuse }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Sexual Abuse">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0DED2;"> Sexual Abuse </th>
+					<td mat-cell *matCellDef="let element">{{ element.sexual_abuse }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Psychological Abuse">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0DED2;"> Psychological Abuse </th>
+					<td mat-cell *matCellDef="let element">{{ element.psychological_abuse }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Neglect">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0DED2;"> Neglect </th>
+					<td mat-cell *matCellDef="let element">{{ element.neglect }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Others">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0DED2;"> Others </th>
+					<td mat-cell *matCellDef="let element">{{ element.others }}</td>
+				</ng-container>
+
+				<ng-container matColumnDef="immediate_family">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0DED2;"> Immediate Family </th>
+					<td mat-cell *matCellDef="let element">{{ element.immediate_family }}</td>
+				</ng-container>
+				<ng-container matColumnDef="other_close_relative">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0DED2;"> Other Close Relative </th>
+					<td mat-cell *matCellDef="let element">{{ element.other_close_relative }}</td>
+				</ng-container>
+				<ng-container matColumnDef="acquaintance">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0DED2;"> Acquaintance </th>
+					<td mat-cell *matCellDef="let element">{{ element.acquaintance }}</td>
+				</ng-container>
+				<ng-container matColumnDef="stranger">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0DED2;"> Stranger </th>
+					<td mat-cell *matCellDef="let element">{{ element.stranger }}</td>
+				</ng-container>
+				<ng-container matColumnDef="local_official">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0DED2;"> Local Official </th>
+					<td mat-cell *matCellDef="let element">{{ element.local_official }}</td>
+				</ng-container>
+				<ng-container matColumnDef="law_enforcer">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0DED2;"> Law Enforcer </th>
+					<td mat-cell *matCellDef="let element">{{ element.law_enforcer }}</td>
+				</ng-container>
+				<ng-container matColumnDef="other_guardians">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #A0DED2;"> Other Guardians </th>
+					<td mat-cell *matCellDef="let element">{{ element.other_guardians }}</td>
+				</ng-container>
+
+				<ng-container matColumnDef="Referred to PNP">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Referred to PNP </th>
+					<td mat-cell *matCellDef="let element">{{ element.referred_pnp }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Referred to NBI">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Referred to NBI </th>
+					<td mat-cell *matCellDef="let element">{{ element.referred_nbi }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Referred to Medical">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Referred to Medical </th>
+					<td mat-cell *matCellDef="let element">{{ element.referred_medical }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Referred to Legal">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Referred to Court </th>
+					<td mat-cell *matCellDef="let element">{{ element.referred_legal_assist }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Referred to Others">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Referred to Others </th>
+					<td mat-cell *matCellDef="let element">{{ element.referred_others }}</td>
+				</ng-container>
+				<ng-container matColumnDef="actions-taken-last">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Actions Taken by the Barangay </th>
+					<td mat-cell *matCellDef="let element">{{ element.total_actions }}</td>
+				</ng-container>
+
+				<tr mat-header-row *matHeaderRowDef="['firstLevelHeader'];"></tr>
+				<tr mat-header-row *matHeaderRowDef="topHeaderColumns"></tr>
+				<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+				<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+			</table>
+		</div>
+	</div>
+	<div class="card-body b-t-1 p-0 full-screen-container" *ngIf="isLoading">
+		<div class="mat-elevation-z8">
+			<div class="row">
+				<div class="col">
+					<mat-spinner></mat-spinner>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

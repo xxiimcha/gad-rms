@@ -1,0 +1,23 @@
+table {
+    width: 100%;
+}
+
+th.mat-header-cell, td.mat-cell {
+    text-align: center;
+    border: 1px solid #CCC;
+    padding: 0 !important;
+}
+.center-header {
+    text-align: center;
+}
+
+.rotated-header {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: normal;
+    height: 250px;
+}
+td {
+    font-size: 12px !important;
+    text-align: center;
+}

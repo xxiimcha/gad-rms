@@ -1,0 +1,31 @@
+<div class="flex-layout">
+    <app-branding></app-branding>
+    <mat-nav-list class="sidebar-list">
+        <div class="row"*ngIf="user">
+            <!-- <div class="col-4">
+                <img src="/assets/images/profile/user-1.jpg" class="rounded-circle" alt="" style="width: 45px; height: 45px" />
+                
+            </div> -->
+            <div class="col" style="color: white; font-weight: bold;">
+                <!-- {{ user.first_name }} {{ user.last_name }}<br> -->
+                {{ user.email }} <br>
+                <span class="role">{{ uppercaseEachWord(user.role) }}</span>
+            </div>
+        </div>
+        <div class="line-user"></div>
+        <ng-container *ngFor="let item of navItems">
+            <app-nav-item [item]="item" (click)="toggleCasesSubNav(item)"></app-nav-item>
+            <!-- <mat-nav-list *ngIf="item.route === 'app/cases' && showCasesSubNav">
+                <ng-container *ngFor="let subItem of item.children">
+                    <a mat-list-item [routerLink]="subItem.route" routerLinkActive="active">
+                        {{ subItem.displayName }}
+                    </a>
+                </ng-container>
+            </mat-nav-list> -->
+        </ng-container>
+    </mat-nav-list>
+    <div class="line"></div>
+    <mat-nav-list class="sidebar-list">
+        <app-nav-item *ngFor="let item of profileItems" [item]="item"></app-nav-item>
+    </mat-nav-list>
+</div>

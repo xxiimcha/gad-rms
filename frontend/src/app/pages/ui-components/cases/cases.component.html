@@ -1,0 +1,33 @@
+<div class="card cardWithShadow theme-card col-12">
+    <div class="card-header d-flex align-items-center">
+        <h2 class="card-title m-b-0">Cases</h2>
+    </div>
+    <div class="card-body b-t-1 p-1">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="vaw-tab" data-bs-toggle="tab" data-bs-target="#vaw-tab-pane" type="button" role="tab" aria-controls="vaw-tab-pane" aria-selected="true">Violence Against Women</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="vac-tab" data-bs-toggle="tab" data-bs-target="#vac-tab-pane" type="button" role="tab" aria-controls="vac-tab-pane" aria-selected="false">Violence Against Children</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="vaw-tab-pane" role="tabpanel" aria-labelledby="vaw-tab" tabindex="0">
+                <div class="card-header d-flex align-items-center" *ngIf="!superAdmin">
+                    <button type="button" class="btn btn-primary btn-rounded btn-sm fw-bold ms-auto" (click)="openModal('vaw')">
+                        Add Record
+                    </button>
+                </div>
+                <app-cases-vaw-list [vawData]="vaws"></app-cases-vaw-list>
+            </div>
+            <div class="tab-pane fade" id="vac-tab-pane" role="tabpanel" aria-labelledby="vac-tab" tabindex="0">
+                <div class="card-header d-flex align-items-center" *ngIf="!superAdmin">
+                    <button type="button" class="btn btn-primary btn-rounded btn-sm fw-bold ms-auto" (click)="openModal('vac')">
+                        Add Record
+                    </button>
+                </div>
+                <app-cases-vac-list [vacData]="vacs"></app-cases-vac-list>
+            </div>
+        </div>
+    </div>
+</div>

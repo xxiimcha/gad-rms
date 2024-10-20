@@ -1,0 +1,98 @@
+<div class="modal-header">
+    <h4 class="modal-title">Violence Against Women Record</h4>
+    <button type="button" class="btn ms-auto" (click)="activeModal.dismiss('Cross click')"><span
+            aria-hidden="true">&times;</span></button>
+</div>
+<div class="modal-body">
+    <div class="card lesson-border">
+        <div class="card-body">
+            <div class="p-3 form-group">
+                <div class="p-3 form-group">
+                    <h5>VAW Victims</h5>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="city" class="form-label">Month</label>
+                                <select class="form-select" [(ngModel)]="month" disabled>
+                                    <option *ngFor="let month of months" [value]="month">{{ month }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div class="mb-3">
+                                <label for="number_vaw" class="form-label">Total No. Violence Against Women</label>
+                                <input type="number" class="form-control" min="0" oninput="this.value = Math.abs(this.value)" [(ngModel)]="totalProgramValue" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <h6>Type of Violence</h6>
+                    <div class="row" *ngFor="let row of abuseRows; let i = index">
+                        <div class="col-4">
+                            <select class="form-select" [(ngModel)]="row.abuseType" [disabled]="isSuperAdmin || vawStatus === 'Received'">
+                                <option *ngFor="let abuse of availableAbuses(i)" [value]="abuse">{{ abuse }}</option>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <input type="number" class="form-control" [(ngModel)]="row.abuseValue" min="0" (ngModelChange)="updateTotalProgramValue()" [disabled]="isSuperAdmin || vawStatus === 'Received'">
+                        </div>
+                        <div class="col-4" *ngIf="!isSuperAdmin">
+                            <button class="btn btn-primary" (click)="addAbuseRow(i)" [disabled]="!row.abuseType && i != 0"> + </button> &nbsp;
+                            <button class="btn btn-danger" (click)="removeAbuseRow(i)" [disabled]="i == 0"> - </button>
+                        </div>
+                        &nbsp;
+                    </div>
+                    <h6>Actions Taken</h6>
+                    <div class="row" *ngFor="let row of actionRows; let i = index">
+                        <div class="col-4">
+                            <select class="form-select" [(ngModel)]="row.action" [disabled]="isSuperAdmin || vawStatus === 'Received'">
+                                <option *ngFor="let perp of availableActions(i)" [value]="perp">{{ perp }}</option>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <input type="number" class="form-control" [(ngModel)]="row.actionValue" min="0" (ngModelChange)="updateTotalProgramValue()" [disabled]="isSuperAdmin || vawStatus === 'Received'">
+                        </div>
+                        <div class="col-4" *ngIf="!isSuperAdmin">
+                            <button class="btn btn-primary" (click)="addActionRow(i)" [disabled]="!row.action && i != 0"> + </button> &nbsp;
+                            <button class="btn btn-danger" (click)="removeActionRow(i)" [disabled]="i == 0"> - </button>
+                        </div>
+                        &nbsp;
+                    </div>
+                    <h6>Restorative Programs</h6>
+                    <div class="row" *ngFor="let row of programsRows; let i = index">
+                        <div class="col-4">
+                            <select class="form-select" [(ngModel)]="row.program" [disabled]="isSuperAdmin || vawStatus === 'Received'">
+                                <option *ngFor="let perp of availablePrograms(i)" [value]="perp">{{ perp }}</option>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <input type="number" class="form-control" [(ngModel)]="row.programValue" min="0" (ngModelChange)="updateTotalProgramValue()" [disabled]="isSuperAdmin || vawStatus === 'Received'">
+                        </div>
+                        <div class="col-4" *ngIf="!isSuperAdmin">
+                            <button class="btn btn-primary" (click)="addProgramRow(i)" [disabled]="!row.program && i != 0"> + </button> &nbsp;
+                            <button class="btn btn-danger" (click)="removeProgramRow(i)" [disabled]="i == 0"> - </button>
+                        </div>
+                        &nbsp;
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <h6>Remarks</h6>
+                                <textarea type="text" class="form-control" [(ngModel)]="remarks" [disabled]="vawStatus === 'Received'"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <div *ngIf="vawStatus === 'Draft' || vawStatus === ''">
+        <button type="submit" class="btn btn-primary m-1" (click)="submitReport()" *ngIf="vawStatus === 'Draft'">Submit</button>
+        <button type="submit" class="btn btn-primary m-1" (click)="saveAsDraft()" *ngIf="!isSuperAdmin">Save as Draft</button>
+    </div>
+    <div *ngIf="vawStatus === 'Submitted'">
+        <button type="submit" class="btn btn-primary m-1" (click)="receivedVaw()" *ngIf="isSuperAdmin">Received</button>
+    </div>
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss('Close click')">Close</button>
+</div>

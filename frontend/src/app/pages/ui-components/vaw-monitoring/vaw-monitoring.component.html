@@ -1,0 +1,116 @@
+<div class="card cardWithShadow theme-card">
+	<div class="col p-2 d-flex justify-content-end">
+		<div class="m-l-auto">
+			<mat-form-field class="theme-select" appearance="outline">
+				<mat-select value="{{ currentMonth }}" (selectionChange)="initializeMonthly($event.value)">
+					<mat-option *ngFor="let month of months" [value]="month.value">
+						{{ month.viewValue }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+		</div>
+		<button type="button" class="btn btn-primary btn-rounded btn-sm fw-bold" (click)="exportToExcel()"  *ngIf="superAdmin">
+			Export to Excel
+		</button>
+	</div>
+	<div class="card-body b-t-1 p-0" *ngIf="dateRange && !isLoading">
+		<div class="mat-elevation-z8">
+			<table id="dataTable" mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+				<ng-container matColumnDef="firstLevelHeader">
+					<th mat-header-cell *matHeaderCellDef [attr.colspan]="14" class="center-header">
+						MONITORING OF INCIDENCE ON VIOLENCE AGAINST WOMEN (VAW)<br>
+						For the Period of {{ dateRange }}<br>
+						National Capital Region
+					</th>
+				</ng-container>
+				<ng-container matColumnDef="blank-header">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #F0D0C9;"> &nbsp; </th>
+				</ng-container>
+				<ng-container matColumnDef="vaw-victims">
+					<th mat-header-cell *matHeaderCellDef class="center-header" style="background-color: #FBCEB1;"> VAW Victims </th>
+				</ng-container>
+				<ng-container matColumnDef="total-cases-acted">
+					<th mat-header-cell *matHeaderCellDef class="center-header" [attr.colspan]="4" style="background-color: #C5E1C0;"> Type of Violence </th>
+				</ng-container>
+				<ng-container matColumnDef="actions-taken">
+					<th mat-header-cell *matHeaderCellDef class="center-header" [attr.colspan]="7" style="background-color: #E7C3C3;"> Actions Taken by the Barangay</th>
+				</ng-container>
+				<ng-container matColumnDef="blank-actions-taken-last">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> &nbsp; </th>
+				</ng-container>
+
+				<ng-container matColumnDef="barangay-header">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #F0D0C9;"> Barangay </th>
+					<td mat-cell *matCellDef="let element"> {{element.barangay}} </td>
+				</ng-container>
+				<ng-container matColumnDef="No Of Cases">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header"  style="background-color: #FBCEB1;"> Total No. of Victims </th>
+					<td mat-cell *matCellDef="let element"> {{element.number_vaw}} </td>
+				</ng-container>
+				<ng-container matColumnDef="Physical Abuse">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #C5E1C0;"> Physical Abuse </th>
+					<td mat-cell *matCellDef="let element">{{ element.physical_abuse }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Sexual Abuse">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #C5E1C0;"> Sexual Abuse </th>
+					<td mat-cell *matCellDef="let element">{{ element.sexual_abuse }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Psychological Abuse">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #C5E1C0;"> Psychological Abuse </th>
+					<td mat-cell *matCellDef="let element">{{ element.psychological_abuse }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Economic Abuse">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #C5E1C0;"> Economic Abuse </th>
+					<td mat-cell *matCellDef="let element">{{ element.economic_abuse }}</td>
+				</ng-container>
+
+				<ng-container matColumnDef="Issued BPO">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Issued BPO </th>
+					<td mat-cell *matCellDef="let element">{{ element.issued_bpo }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Referred to LSWDO">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Referred to LSWDO/CSWDO </th>
+					<td mat-cell *matCellDef="let element">{{ element.referred_lowdo }}</td>>
+				</ng-container>
+				<ng-container matColumnDef="Referred to PNP">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Referred to PNP </th>
+					<td mat-cell *matCellDef="let element">{{ element.referred_pnp }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Referred to NBI">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Referred to NBI </th>
+					<td mat-cell *matCellDef="let element">{{ element.referred_nbi }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Referred to Medical">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Referred to Medical </th>
+					<td mat-cell *matCellDef="let element">{{ element.referred_medical }}</td>
+				</ng-container>
+				<ng-container matColumnDef="Referred to Court">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Referred to Court </th>
+					<td mat-cell *matCellDef="let element">{{ element.referred_court }}</td>
+				</ng-container>
+				<ng-container matColumnDef="actions-taken-last">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Actions Taken by the Barangay </th>
+					<td mat-cell *matCellDef="let element">{{ element.total_actions }}</td>
+				</ng-container>
+				<ng-container matColumnDef="total-actions-taken-last">
+					<th mat-header-cell *matHeaderCellDef class="rotated-header" style="background-color: #E7C3C3;"> Actions Taken by the Barangay </th>
+					<td mat-cell *matCellDef="let element">{{ element.total_actions }}</td>
+				</ng-container>
+
+				<tr mat-header-row *matHeaderRowDef="['firstLevelHeader'];"></tr>
+				<tr mat-header-row *matHeaderRowDef="topHeaderColumns"></tr>
+				<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+				<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+			</table>
+		</div>
+	</div>
+	<div class="card-body b-t-1 p-0 full-screen-container" *ngIf="isLoading">
+		<div class="mat-elevation-z8">
+			<div class="row">
+				<div class="col">
+					<mat-spinner></mat-spinner>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

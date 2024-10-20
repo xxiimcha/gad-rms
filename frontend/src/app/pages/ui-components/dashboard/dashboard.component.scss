@@ -1,0 +1,41 @@
+.example-radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    align-items: flex-start;
+}
+
+.example-radio-button {
+    margin: 5px;
+}
+
+
+.theme-select {
+    width: 200px !important;
+}
+
+.full-screen-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+}
+
+.bg-pink {
+    background-color: #F8C8DC;
+}
+.bg-yellow {
+    background-color: #FFFAA0;
+}
+.bg-green {
+    background-color: #C1E1C1;
+}
+.bg-purple {
+    background-color: #C3B1E1;
+}

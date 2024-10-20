@@ -1,0 +1,26 @@
+.flex-layout {
+    display: flex;
+    flex-direction: column;
+}
+
+.line {
+    border-bottom: 1px solid #ccc;
+    margin: 20px 0;
+    padding-bottom: 50px;
+}
+
+.line-user {
+    border-bottom: 1px solid #ccc;
+    margin: 20px 0;
+}
+
+.role {
+    font-size: 12px;
+}
+
+@media screen and (max-width: 600px) {
+    /* Apply padding on mobile devices */
+    .sidebar-list {
+        padding: 0 10px; /* Adjust padding as needed */
+    }
+}

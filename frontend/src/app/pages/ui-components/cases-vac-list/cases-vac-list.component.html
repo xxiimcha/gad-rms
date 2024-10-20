@@ -1,0 +1,158 @@
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container matColumnDef="Month">
+        <th mat-header-cell *matHeaderCellDef> Month </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.month }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Total #">
+        <th mat-header-cell *matHeaderCellDef> Total # </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.number_vac }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Male">
+        <th mat-header-cell *matHeaderCellDef> Male </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.male }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Female">
+        <th mat-header-cell *matHeaderCellDef> Female </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.female }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Age 0-4">
+        <th mat-header-cell *matHeaderCellDef> Age 0-4 </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.range_one }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Age 6-9">
+        <th mat-header-cell *matHeaderCellDef> Age 6-9 </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.range_two }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Age 10-14">
+        <th mat-header-cell *matHeaderCellDef> Age 10-14 </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.range_three }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Age 15-17">
+        <th mat-header-cell *matHeaderCellDef> Age 15-17 </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.range_four }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="18 up PWD">
+        <th mat-header-cell *matHeaderCellDef> 18 up PWD </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.range_five }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Physical Abuse">
+        <th mat-header-cell *matHeaderCellDef> Physical Abuse </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.physical_abuse }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Sexual Abuse">
+        <th mat-header-cell *matHeaderCellDef> Sexual Abuse </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.sexual_abuse }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Psychological Abuse">
+        <th mat-header-cell *matHeaderCellDef> Psychological Abuse </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.psychological_abuse }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Neglect">
+        <th mat-header-cell *matHeaderCellDef> Neglect </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.neglect }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Others">
+        <th mat-header-cell *matHeaderCellDef> Others </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center"><div class="ms-3">
+                <p class="text-muted mb-0">{{ element.others }}</p>
+                </div>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Created Date">
+        <th mat-header-cell *matHeaderCellDef> Created Date </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center">
+                <p class="text-muted mb-0">{{ element.created_at }}</p>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Last Updated Date">
+        <th mat-header-cell *matHeaderCellDef> Last Updated Date </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center">
+                <p class="text-muted mb-0">{{ element.updated_at }}</p>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="Action" *ngIf="!superAdmin">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element">
+            <button type="button" class="btn btn-primary btn-rounded btn-sm fw-bold m-1" (click)="editVac(element)" *ngIf="element.status === 'Draft'">
+                Edit
+            </button>
+            <button type="button" class="btn btn-danger btn-rounded btn-sm fw-bold m-1" (click)="deleteVac(element.id)" *ngIf="element.status === 'Draft'">
+                Delete
+            </button>
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<mat-paginator [pageSizeOptions]="[12, 24]" showFirstLastButtons aria-label="Select page of users"></mat-paginator>
