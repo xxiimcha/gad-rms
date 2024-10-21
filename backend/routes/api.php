@@ -36,9 +36,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/2fa/generate', [UserController::class, 'email_generated_session_otp']);
 });
 
-    //Analysis Controller
-    Route::get('/vaw-prescriptive-analysis', [VAWAnalysisController::class, 'getPredictiveAnalysis']);
-    Route::get('/prescriptive-analysis', [AnalysisController::class, 'getPrescriptiveAnalysis']);
+//Analysis Controller
+Route::get('/vaw-predictive-analysis', [VawAnalysisController::class, 'getPredictiveAnalysis']);
+Route::get('/prescriptive-analysis', [AnalysisController::class, 'getPrescriptiveAnalysis']);
 Route::middleware(['auth:sanctum', '2fa'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);

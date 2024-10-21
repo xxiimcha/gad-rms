@@ -16,12 +16,12 @@ class AnalysisController extends Controller
     public function getPrescriptiveAnalysis(Request $request)
     {
         try {
-            $barangayName = $request->query('barangay', 'All');
+            $barangayId = $request->query('barangay', 'All');
 
             // Fetch data based on barangay selection
-            $cases = $barangayName === 'All'
-                ? ViolenceAgainstChildren::all()
-                : ViolenceAgainstChildren::where('barangay', $barangayName)->get();
+            $cases = $barangayId === 'All'
+                ? ViolenceAgainstChildren::with('barangay')->get()
+                : ViolenceAgainstChildren::where('barangay', $barangayId)->with('barangay')->get();
 
             // Prepare analysis based on the data
             $analysisData = $this->analyzeData($cases);
@@ -49,7 +49,11 @@ class AnalysisController extends Controller
             // Get the first case in the group (all cases in a group have the same barangay and month)
             $sampleCase = $casesGroup[0];
 
-            // Find the case with the highest count for the barangay and month
+            // Retrieve the barangay name from the Barangay model based on the case's barangay ID
+            $barangay = Barangay::find($sampleCase->barangay);
+            $barangayName = $barangay ? $barangay->name : 'Unknown Barangay';
+
+            // Find the case type with the maximum count
             $caseTypes = [
                 'Physical Abuse' => $sampleCase->physical_abuse,
                 'Sexual Abuse' => $sampleCase->sexual_abuse,
@@ -58,13 +62,8 @@ class AnalysisController extends Controller
                 'Others' => $sampleCase->others,
             ];
 
-            // Find the type with the maximum count
             $maxType = array_keys($caseTypes, max($caseTypes))[0];
             $maxCount = $caseTypes[$maxType];
-
-            // Retrieve the barangay name from the Barangay model based on the case's barangay name
-            $barangay = Barangay::where('name', $sampleCase->barangay)->first();
-            $barangayName = $barangay ? $barangay->name : $sampleCase->barangay;
 
             $recommendedAction = $this->getRecommendedAction($maxType);
 

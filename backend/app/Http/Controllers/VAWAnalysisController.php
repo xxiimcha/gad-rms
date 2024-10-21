@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -8,19 +7,15 @@ use App\Models\Barangay;
 
 class VAWAnalysisController extends Controller
 {
-    public function getBarangays()
-    {
-        $barangays = Barangay::all();
-        return response()->json($barangays);
-    }
-
     public function getPredictiveAnalysis(Request $request)
     {
         try {
             $barangay = $request->query('barangay', null);
 
-            // Fetch data based on the barangay selection
-            $cases = $barangay ? ViolenceAgainstWomen::where('barangay', $barangay)->get() : ViolenceAgainstWomen::all();
+            // Fetch data based on the barangay selection with the correct relationship
+            $cases = $barangay
+                ? ViolenceAgainstWomen::where('barangay', $barangay)->with('barangayRelation')->get()
+                : ViolenceAgainstWomen::with('barangayRelation')->get();
 
             // Perform analysis logic and prepare the data
             $analysisData = $this->analyzeData($cases);
@@ -29,7 +24,7 @@ class VAWAnalysisController extends Controller
             return response()->json($analysisData);
         } catch (\Exception $e) {
             \Log::error('Error in getPredictiveAnalysis: ' . $e->getMessage());
-            return response()->json(['error' => 'An error occurred while processing the analysis.'], 500);
+            return response()->json(['error' => 'An error occurred while processing the analysis.', 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -49,10 +44,13 @@ class VAWAnalysisController extends Controller
             $maxType = array_keys($caseTypes, max($caseTypes))[0];
             $maxCount = $caseTypes[$maxType];
 
+            // Get the barangay name using the correct relationship method
+            $barangayName = $case->barangayRelation ? $case->barangayRelation->name : 'Unknown';
+
             $recommendedAction = $this->getRecommendedAction($maxType);
 
             $result[] = [
-                'barangay' => $case->barangay,
+                'barangay' => $barangayName,
                 'month' => $case->month,
                 'case_type' => $maxType,
                 'case_count' => $maxCount,
@@ -78,3 +76,5 @@ class VAWAnalysisController extends Controller
         }
     }
 }
+
+?>

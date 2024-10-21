@@ -671,13 +671,13 @@
 			</mat-card-content>
 		</mat-card>
 	</div>
-
 	<div class="col-lg-12">
-		<mat-card class="cardWithShadow">
-			<mat-card-content class="p-24">
-				<div class="d-flex w-100">
-					<mat-form-field class="theme-select" appearance="outline">
-						<mat-select [(ngModel)]="currentBarangay" (selectionChange)="fetchVawAnalysis()">
+		<mat-card class="cardWithShadow" style="border-radius: 8px; overflow: hidden;">
+			<mat-card-content class="p-24" style="background-color: #f9f9f9; border-left: 5px solid #ff4081;">
+				<!-- Header Section with Select Barangay Dropdown -->
+				<div class="d-flex w-100 mb-3">
+					<mat-form-field class="theme-select" appearance="outline" style="width: 100%;">
+						<mat-select [(ngModel)]="currentBarangay" (selectionChange)="fetchVawAnalysis()" placeholder="Select Barangay">
 							<mat-option value="All">All</mat-option>
 							<mat-option *ngFor="let brgy of barangays" [value]="brgy.name">
 								{{ brgy.name }}
@@ -685,34 +685,50 @@
 						</mat-select>
 					</mat-form-field>
 				</div>
-	
-				<div class="d-flex w-100 align-items-center justify-content-between">
-					<button mat-button (click)="previousMonth()" [disabled]="currentMonthIndex === 0">
+				
+				<!-- Navigation for Previous and Next Months -->
+				<div class="d-flex w-100 align-items-center justify-content-between mb-3">
+					<button mat-stroked-button color="accent" (click)="previousMonth()" [disabled]="currentMonthIndex === 0">
 						Previous
 					</button>
-					<mat-card-title>{{ getCurrentMonth() }} Violence Against Women Prescriptive Analysis</mat-card-title>
-					<button mat-button (click)="nextMonth()" [disabled]="currentMonthIndex === uniqueMonths.length - 1">
+					<mat-card-title style="font-weight: 500; font-size: 1.3rem;">{{ getCurrentMonth() }} Violence Against Women Prescriptive Analysis</mat-card-title>
+					<button mat-stroked-button color="accent" (click)="nextMonth()" [disabled]="currentMonthIndex === uniqueMonths.length - 1">
 						Next
 					</button>
 				</div>
 				<div class="p-24">
 					<div *ngIf="vawAnalysis.length > 0; else noData">
-						
-						<div *ngFor="let recommendation of getVawRecommendationsByMonth(uniqueMonths[currentMonthIndex])">
-							<mat-card class="mb-3">
-								<mat-card-header>
-									<mat-card-title>Barangay: {{ recommendation.barangay }}</mat-card-title>
-								</mat-card-header>
-								<mat-card-content>
-									<p>Case Type: {{ recommendation.case_type }}</p>
-									<p>Number of Cases: {{ recommendation.case_count }}</p>
-									<p>Recommended Action: {{ recommendation.recommended_action }}</p>
-								</mat-card-content>
-							</mat-card>
+						<div *ngIf="getVawRecommendationsByMonth(uniqueMonths[currentMonthIndex]).length > 0; else noDataForMonth">
+							<div *ngFor="let recommendation of getVawRecommendationsByMonth(uniqueMonths[currentMonthIndex])">
+								<mat-card class="mb-3" style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-left: 4px solid #ff4081;">
+									<mat-card-header>
+										<mat-card-title style="font-size: 1.1rem; font-weight: 600; color: #ff4081;">{{ recommendation.barangay }}</mat-card-title>
+									</mat-card-header>
+									<mat-card-content style="padding: 16px;">
+										<table style="width: 100%; border-collapse: collapse;">
+											<tr style="border-bottom: 1px solid #ddd;">
+												<td style="padding: 8px; font-weight: bold;">Case Type</td>
+												<td style="padding: 8px;">{{ recommendation.case_type }}</td>
+											</tr>
+											<tr style="border-bottom: 1px solid #ddd;">
+												<td style="padding: 8px; font-weight: bold;">Number of Cases</td>
+												<td style="padding: 8px;">{{ recommendation.case_count }}</td>
+											</tr>
+											<tr>
+												<td style="padding: 8px; font-weight: bold;">Recommended Action</td>
+												<td style="padding: 8px; font-style: italic; color: #555;">{{ recommendation.recommended_action }}</td>
+											</tr>
+										</table>
+									</mat-card-content>
+								</mat-card>
+							</div>
 						</div>
+						<ng-template #noDataForMonth>
+							<p style="color: #777;">No data available for {{ getCurrentMonth() }}.</p>
+						</ng-template>
 					</div>
 					<ng-template #noData>
-						<p>No data available for predictive analysis.</p>
+						<p style="color: #777;">No data available for prescriptive analysis.</p>
 					</ng-template>
 				</div>
 			</mat-card-content>
@@ -720,60 +736,76 @@
 	</div>
 	
 	<div class="col-lg-12">
-    <mat-card class="cardWithShadow">
-        <mat-card-content class="p-24">
-            <div class="d-flex w-100">
-                <div class="m-l-auto" *ngIf="currentUserRole === 'super admin'">
-                    <mat-form-field class="theme-select" appearance="outline">
-                        <mat-select [(ngModel)]="currentBarangay" (selectionChange)="onBarangayVacChange($event)">
-                            <mat-option value="All">All</mat-option>
-                            <mat-option *ngFor="let brgy of barangays" [value]="brgy.name">
-                                {{ brgy.name }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <div class="m-l-auto" *ngIf="currentUserRole !== 'super admin'">
-                    {{ currentBarangay }}
-                </div>
-            </div>
-            <div class="d-flex w-100 align-items-center justify-content-between">
-                <button mat-button (click)="previousMonth()" [disabled]="currentMonthIndex === 0">
-                    Previous
-                </button>
-                <mat-card-title>{{ getCurrentMonth() }} Violence Against Children Prescriptive Analysis</mat-card-title>
-                <button mat-button (click)="nextMonth()" [disabled]="currentMonthIndex === uniqueMonths.length - 1">
-                    Next
-                </button>
-            </div>
-            <div class="p-24">
-                <div *ngIf="prescriptiveAnalysis.length > 0; else noData">
-                    <div *ngIf="getRecommendationsByMonth(getCurrentMonth()).length > 0; else noDataForMonth">
-                        <div *ngFor="let recommendation of getRecommendationsByMonth(getCurrentMonth())">
-                            <mat-card class="mb-3">
-                                <mat-card-header>
-                                    <mat-card-title>Barangay: {{ recommendation.barangay }}</mat-card-title>
-                                </mat-card-header>
-                                <mat-card-content>
-                                    <p>Case Type: {{ recommendation.case_type }}</p>
-                                    <p>Number of Cases: {{ recommendation.case_count }}</p>
-                                    <p>Recommended Action: {{ recommendation.recommended_action }}</p>
-                                </mat-card-content>
-                            </mat-card>
-                        </div>
-                    </div>
-                    <ng-template #noDataForMonth>
-                        <p>No data available for {{ getCurrentMonth() }}.</p>
-                    </ng-template>
-                </div>
-                <ng-template #noData>
-                    <p>No data available for prescriptive analysis.</p>
-                </ng-template>
-            </div>
-        </mat-card-content>
-    </mat-card>
-</div>
-
+		<mat-card class="cardWithShadow" style="border-radius: 8px; overflow: hidden;">
+			<mat-card-content class="p-24" style="background-color: #f9f9f9; border-left: 5px solid #3f51b5;">
+				<!-- Header Section with Select and Display of Barangay -->
+				<div class="d-flex w-100 mb-3 align-items-center justify-content-between">
+					<mat-card-title style="font-weight: bold; font-size: 1.5rem; color: #3f51b5;">Violence Against Children Prescriptive Analysis</mat-card-title>
+					<div *ngIf="currentUserRole === 'super admin'" style="max-width: 300px;">
+						<mat-form-field class="theme-select" appearance="outline" style="width: 100%;">
+							<mat-select [(ngModel)]="currentBarangay" (selectionChange)="onBarangayVacChange($event)" placeholder="Select Barangay">
+								<mat-option value="All">All</mat-option>
+								<mat-option *ngFor="let brgy of barangays" [value]="brgy.name">
+									{{ brgy.name }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+					<div *ngIf="currentUserRole !== 'super admin'" class="m-l-auto" style="font-weight: bold; color: #333;">
+						{{ currentBarangay }}
+					</div>
+				</div>
+				
+				<!-- Navigation for Previous and Next Months -->
+				<div class="d-flex w-100 align-items-center justify-content-between mb-3">
+					<button mat-stroked-button color="primary" (click)="previousMonth()" [disabled]="currentMonthIndex === 0">
+						Previous
+					</button>
+					<mat-card-title style="font-weight: 500; font-size: 1.3rem;">{{ getCurrentMonth() }}</mat-card-title>
+					<button mat-stroked-button color="primary" (click)="nextMonth()" [disabled]="currentMonthIndex === uniqueMonths.length - 1">
+						Next
+					</button>
+				</div>
+	
+				<!-- Content Section for Prescriptive Analysis -->
+				<div class="p-24">
+					<div *ngIf="prescriptiveAnalysis.length > 0; else noData">
+						<div *ngIf="getRecommendationsByMonth(getCurrentMonth()).length > 0; else noDataForMonth">
+							<div *ngFor="let recommendation of getRecommendationsByMonth(getCurrentMonth())">
+								<mat-card class="mb-3" style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-left: 4px solid #3f51b5;">
+									<mat-card-header>
+										<mat-card-title style="font-size: 1.1rem; font-weight: 600; color: #3f51b5;">{{ recommendation.barangay }}</mat-card-title>
+									</mat-card-header>
+									<mat-card-content style="padding: 16px;">
+										<table style="width: 100%; border-collapse: collapse;">
+											<tr style="border-bottom: 1px solid #ddd;">
+												<td style="padding: 8px; font-weight: bold;">Case Type</td>
+												<td style="padding: 8px;">{{ recommendation.case_type }}</td>
+											</tr>
+											<tr style="border-bottom: 1px solid #ddd;">
+												<td style="padding: 8px; font-weight: bold;">Number of Cases</td>
+												<td style="padding: 8px;">{{ recommendation.case_count }}</td>
+											</tr>
+											<tr>
+												<td style="padding: 8px; font-weight: bold;">Recommended Action</td>
+												<td style="padding: 8px; font-style: italic; color: #555;">{{ recommendation.recommended_action }}</td>
+											</tr>
+										</table>
+									</mat-card-content>
+								</mat-card>
+							</div>
+						</div>
+						<ng-template #noDataForMonth>
+							<p style="color: #777;">No data available for {{ getCurrentMonth() }}.</p>
+						</ng-template>
+					</div>
+					<ng-template #noData>
+						<p style="color: #777;">No data available for prescriptive analysis.</p>
+					</ng-template>
+				</div>
+			</mat-card-content>
+		</mat-card>
+	</div>
 </div>
 <div class="b-t-1 p-0 full-screen-container" *ngIf="isLoading">
 	<div class="mat-elevation-z8">

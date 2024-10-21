@@ -36,8 +36,14 @@ class ViolenceAgainstWomen extends Model implements Auditable
     //     'remarks'
     // ];
 
+    public function barangayRelation()
+    {
+        // Assuming 'barangay' is the foreign key in violence_against_women table
+        // and 'id' is the primary key in the barangays table
+        return $this->belongsTo(Barangay::class, 'barangay', 'id');
+    }
     public function barangay()
     {
-        return $this->belongsTo(Barangay::class, 'barangay');
+        return $this->belongsTo(Barangay::class, 'barangay', 'id');
     }
 }
