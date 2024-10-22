@@ -212,12 +212,6 @@ export class CasesVawFormComponent implements OnInit {
         this.abuseRows.forEach(row => {
             total += row.abuseValue;
         });
-        this.actionRows.forEach(row => {
-            total += row.actionValue;
-        });
-        this.programsRows.forEach(row => {
-            total += row.programValue;
-        });
         return total;
     }
 

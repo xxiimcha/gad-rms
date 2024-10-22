@@ -121,25 +121,43 @@ class ViolenceAgainstChildrenController extends Controller
 
             $brgy = Barangay::where('id', $currentUser->barangay)->first();
 
-            if(isset($vac)) {
+            if (isset($vac)) {
                 $barangayData[] = [
                     'month' => $month,
                     'barangay' => $brgy->name,
                     'number_vac' => $vac->number_vac ?? 0,
+                    'male' => $vac->male ?? 0,
+                    'female' => $vac->female ?? 0,
                     'physical_abuse' => $vac->physical_abuse ?? 0,
                     'sexual_abuse' => $vac->sexual_abuse ?? 0,
                     'psychological_abuse' => $vac->psychological_abuse ?? 0,
                     'economic_abuse' => $vac->economic_abuse ?? 0,
+                    'neglect' => $vac->neglect ?? 0,
+                    'others' => $vac->others ?? 0,
+                    'immediate_family' => $vac->immediate_family ?? 0,
+                    'other_close_relative' => $vac->other_close_relative ?? 0,
+                    'acquaintance' => $vac->acquaintance ?? 0,
+                    'stranger' => $vac->stranger ?? 0,
+                    'local_official' => $vac->local_official ?? 0,
+                    'law_enforcer' => $vac->law_enforcer ?? 0,
+                    'other_guardians' => $vac->other_guardians ?? 0,
                     'issued_bpo' => $vac->issued_bpo ?? 0,
                     'referred_lowdo' => $vac->referred_lowdo ?? 0,
                     'referred_pnp' => $vac->referred_pnp ?? 0,
                     'referred_nbi' => $vac->referred_nbi ?? 0,
                     'referred_court' => $vac->referred_court ?? 0,
                     'referred_medical' => $vac->referred_medical ?? 0,
+                    'referred_others' => $vac->referred_others ?? 0,
+                    'referred_legal_assist' => $vac->referred_legal_assist ?? 0,
                     'trainings' => $vac->trainings ?? 0,
                     'counseling' => $vac->counseling ?? 0,
                     'iec' => $vac->iec ?? 0,
                     'fund_allocation' => $vac->fund_allocation ?? 0,
+                    'range_one' => $vac->range_one ?? 0,
+                    'range_two' => $vac->range_two ?? 0,
+                    'range_three' => $vac->range_three ?? 0,
+                    'range_four' => $vac->range_four ?? 0,
+                    'range_five' => $vac->range_five ?? 0,
                     'total_actions' => 0,
                     'status' => $vac->status
                 ];
@@ -171,7 +189,7 @@ class ViolenceAgainstChildrenController extends Controller
 
     public function store(Request $request)  {
         $data = $this->build_data($request);
-        
+
         $violenceAgainstChildren = ViolenceAgainstChildren::create($data);
 
         return new ViolenceAgainstChildrenResource($violenceAgainstChildren);
@@ -216,7 +234,7 @@ class ViolenceAgainstChildrenController extends Controller
             'barangay' => $request->barangay ?? 0,
             'status' => $request->status
         ];
-        
+
         // Handling genderRows
         foreach ($request->genderRows as $row) {
             if ($row['gender'] === 'Male') {
@@ -225,7 +243,7 @@ class ViolenceAgainstChildrenController extends Controller
                 $data['female'] = $row['genderValue'];
             }
         }
-        
+
         // Handling ageRows
         foreach ($request->ageRows as $row) {
             switch ($row['age']) {
@@ -246,7 +264,7 @@ class ViolenceAgainstChildrenController extends Controller
                     break;
             }
         }
-        
+
         // Handling abuseRows
         foreach ($request->abuseRows as $row) {
             switch ($row['abuseType']) {
@@ -267,7 +285,7 @@ class ViolenceAgainstChildrenController extends Controller
                     break;
             }
         }
-        
+
         // Handling perpetratorsRows
         foreach ($request->perpetratorsRows as $row) {
             switch ($row['perpetrator']) {
@@ -294,7 +312,7 @@ class ViolenceAgainstChildrenController extends Controller
                     break;
             }
         }
-        
+
         // Handling actionRows
         foreach ($request->actionRows as $row) {
             switch ($row['action']) {
@@ -315,7 +333,7 @@ class ViolenceAgainstChildrenController extends Controller
                     break;
             }
         }
-        
+
         // Handling programsRows
         foreach ($request->programsRows as $row) {
             switch ($row['program']) {
@@ -338,27 +356,27 @@ class ViolenceAgainstChildrenController extends Controller
 
     public function get_all_vacs_by_param(Request $request) {
         $currentUser = $request->user();
-        
+
         // Define months for iteration
         $monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        
+
         // Get all barangays
         $barangays = Barangay::all()->pluck('name');
         $vacsData = [];
-        
+
         foreach ($barangays as $barangay) {
             $barangayData = [
                 'name' => $barangay,
                 'data' => []
             ];
-            
+
             // Get barangay ID
             $brgy = Barangay::where('name', $barangay)->first();
-            
+
             if (!$brgy) {
                 continue; // Skip if barangay not found
             }
-            
+
             foreach ($monthNames as $index => $month) {
                 $vaw = ViolenceAgainstChildren::where('barangay', $brgy['id'])
                 ->where('month', $month)
@@ -367,14 +385,14 @@ class ViolenceAgainstChildrenController extends Controller
                     Carbon::create(date('Y'), 12, 31)->endOfYear()
                 ])
                 ->first();
-                
+
                 // Append the data for the month
                 $barangayData['data'][] = [
                     'month' => $month,
                     'total' => $vaw->number_vac ?? 0
                 ];
             }
-            
+
             $vacsData[] = $barangayData;
         }
 
@@ -388,11 +406,11 @@ class ViolenceAgainstChildrenController extends Controller
         $currentMonthData = array_filter($data->toArray(), function($entry) use ($currentMonth) {
             return $entry['month'] === $currentMonth;
         });
-    
+
         $totalPhysicalCases = array_reduce($currentMonthData, function($carry, $entry) {
             return $carry + $entry['physical_abuse'];
         }, 0);
-    
+
         $totalSexualCases = array_reduce($currentMonthData, function($carry, $entry) {
             return $carry + $entry['sexual_abuse'];
         }, 0);
@@ -436,7 +454,7 @@ class ViolenceAgainstChildrenController extends Controller
         $totalRangeFiveCases = array_reduce($currentMonthData, function($carry, $entry) {
             return $carry + $entry['range_five'];
         }, 0);
-    
+
         $groupedData = [];
         foreach ($currentMonthData as $entry) {
             $barangayName = $entry['barangay']['name'];
@@ -469,7 +487,7 @@ class ViolenceAgainstChildrenController extends Controller
             $groupedData[$barangayName]['neglect'] += $entry['neglect'];
             $groupedData[$barangayName]['others'] += $entry['others'];
         }
-    
+
         $highestMale = [ 'barangay' => '', 'percentage' => 0 ];
         $highestFemale = [ 'barangay' => '', 'percentage' => 0 ];
         $highestRangeOne = [ 'barangay' => '', 'percentage' => 0 ];
@@ -482,7 +500,7 @@ class ViolenceAgainstChildrenController extends Controller
         $highestPsychological = [ 'barangay' => '', 'percentage' => 0 ];
         $highestNeglect = [ 'barangay' => '', 'percentage' => 0 ];
         $highestOthers = [ 'barangay' => '', 'percentage' => 0 ];
-        
+
         foreach ($groupedData as $barangay => $cases) {
             $malePercentage = ($totalMaleCases > 0) ? round(($cases['male'] / $totalMaleCases) * 100, 2) : 0;
             if ($malePercentage > $highestMale['percentage']) {
@@ -556,7 +574,7 @@ class ViolenceAgainstChildrenController extends Controller
                 $highestOthers['percentage'] = $othersPercentage;
             }
         }
-    
+
         return response()->json([
             'male' => $highestMale,
             'female' => $highestFemale,
@@ -575,13 +593,13 @@ class ViolenceAgainstChildrenController extends Controller
 
     public function forecast() {
         $casesData = ViolenceAgainstChildren::all();
-    
+
         $groupedData = [];
         foreach ($casesData as $row) {
             $barangayId = $row->barangay;
             $month = $row->month;
             $cases = (int) $row->number_vac;
-    
+
             $barangay = Barangay::find($barangayId);
             if ($barangay) {
                 $barangayName = $barangay->name;
@@ -591,22 +609,22 @@ class ViolenceAgainstChildrenController extends Controller
                 ];
             }
         }
-    
+
         $forecasts = [];
-    
+
         foreach ($groupedData as $barangay => $data) {
             $monthlyTotals = array_fill(0, 12, ['month' => '', 'total' => 0]);
-    
+
             foreach ($data as $monthData) {
                 $monthIndex = date('n', strtotime($monthData['month'])) - 1;
                 $monthlyTotals[$monthIndex]['month'] = date('F', mktime(0, 0, 0, $monthIndex + 1, 1));
                 $monthlyTotals[$monthIndex]['total'] += $monthData['total'];
             }
-    
+
             $finalData = array_filter($monthlyTotals, function($monthData) {
                 return $monthData['month'] !== '';
             });
-    
+
             $lastIndex = count($finalData) - 1;
             for ($i = count($finalData) - 1; $i >= 0; $i--) {
                 if ($finalData[$i]['total'] > 0) {
@@ -614,21 +632,21 @@ class ViolenceAgainstChildrenController extends Controller
                     break;
                 }
             }
-            
+
             $nextMonthIndex = ($lastIndex + 2) % 12;
             $forecastValue = $finalData[$lastIndex]['total'];
-    
+
             $finalData[] = [
                 'month' => date('F', mktime(0, 0, 0, $nextMonthIndex + 1, 1)),
-                'total' => max(0, $forecastValue) 
+                'total' => max(0, $forecastValue)
             ];
-    
+
             $forecasts[] = [
                 'name' => $barangay,
                 'data' => array_values($finalData),
             ];
         }
-    
+
         return response()->json($forecasts);
     }
 }

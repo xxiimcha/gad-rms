@@ -104,14 +104,17 @@ export class VacMonitoringComponent implements OnInit {
 		this.isLoading = true;
 		this.selectedMonthAndYear = month;
 		this.generateSampleDateRange(month, this.currentYear);
+	
 		this.apiService.getAllVacs(this.currentYear, month).subscribe(res => {
+			console.log('API response:', res); // <-- Add this line to log the API response
+	
 			if(res) {
 				let totalReferredPNP = 0;
 				let totalReferredNBI = 0;
 				let totalReferredMedical = 0;
 				let totalReferredLegal = 0;
 				let totalReferredOthers = 0;
-
+	
 				res.forEach(item => {
 					totalReferredPNP += item.referred_pnp || 0;
 					totalReferredNBI += item.referred_nbi || 0;
@@ -119,13 +122,14 @@ export class VacMonitoringComponent implements OnInit {
 					totalReferredLegal += item.referred_legal_assist || 0;
 					totalReferredOthers += item.referred_others || 0;
 				});
-
+	
 				const dataSourceData = res.map(item => ({ ...item }));
 				this.dataSource.data = dataSourceData;
 				this.isLoading = false;
 			}
 		});
 	}
+	
 
 	generateSampleDateRange(month: string, year: number) {
 		const monthNumber = this.getMonthNumber(month);

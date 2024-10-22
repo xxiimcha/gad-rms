@@ -361,15 +361,6 @@ export class CasesVacFormComponent implements OnInit {
         this.abuseRows.forEach(row => {
             total += row.abuseValue;
         });
-        this.perpetratorsRows.forEach(row => {
-            total += row.perpetratorValue;
-        });
-        this.actionRows.forEach(row => {
-            total += row.actionValue;
-        });
-        this.programsRows.forEach(row => {
-            total += row.programValue;
-        });
         return total;
     }
 
