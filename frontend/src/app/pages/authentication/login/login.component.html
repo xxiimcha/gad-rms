@@ -1,16 +1,20 @@
-<section class="vh-100 bg-light d-flex align-items-center">
-    <div class="container">
-        <div class="row justify-content-center">
+<section class="vh-100 d-flex flex-column" style="background-image: url('/assets/images/background.png'); background-size: cover; background-repeat: no-repeat; background-position: center;">
+    <!-- Header Section -->
+    <header style="background-color: #C168D9; height: 50px; width: 100%;"></header>
+
+    <div class="container position-relative flex-grow-1 d-flex align-items-center">
+        <div class="row justify-content-center w-100">
             <div class="col-md-8 col-lg-6 col-xl-4">
-                <div class="card shadow-lg border-0">
+                <div class="card border-0 shadow-lg">
                     <div class="card-body p-5">
                         <div class="text-center mb-4">
-                            <img src="/assets/images/logos/gad-logo.png" class="img-fluid mb-3" alt="Logo" style="width: 80px;">
-                            <h5 class="text-primary">Welcome Back</h5>
-                            <p class="text-muted">Please login to your account</p>
+                            <!-- Logos based on the provided design -->
+                            <img src="/assets/images/logos/pasig-logo.png" class="img-fluid mb-3" alt="Pasig Logo" style="width: 120px;">
+                            <img src="/assets/images/logos/gad-logo.png" class="img-fluid mb-3" alt="GAD Logo" style="width: 120px;">
+                            <p class="text-muted">Please login your account</p>
                         </div>
                         <form [formGroup]="credentialsForm" (ngSubmit)="login()">
-                            <div data-mdb-input-init class="form-outline mb-4">
+                            <div class="form-outline mb-4">
                                 <label class="form-label"
                                     [ngClass]="{'text-danger': credentialsForm.touched && credentialsForm.get('email')!.invalid, 'text-success': credentialsForm.touched && credentialsForm.get('email')!.valid}">
                                     Email
@@ -22,9 +26,7 @@
                             </div>
                             <div class="form-outline mb-3">
                                 <label class="form-label"
-                                    [ngClass]="{'text-danger': credentialsForm.get('password')?.touched && credentialsForm.get('password')?.invalid}">
-                                    Password
-                                </label>
+                                    [ngClass]="{'text-danger': credentialsForm.get('password')?.touched && credentialsForm.get('password')?.invalid}">Password</label>
                                 <input type="password" formControlName="password" class="form-control"
                                     [ngClass]="{'is-invalid': credentialsForm.get('password')?.touched && credentialsForm.get('password')?.invalid, 'is-valid': credentialsForm.get('password')?.touched && credentialsForm.get('password')?.valid}"
                                     placeholder="Enter Password">
@@ -37,8 +39,7 @@
                             </div>
 
                             <div class="d-grid gap-2 mt-4">
-                                <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
-                                    [disabled]="!credentialsForm.valid">LOGIN</button>
+                                <button type="submit" class="btn btn-primary btn-lg" [disabled]="!credentialsForm.valid">LOGIN</button>
                             </div>
                             <div class="text-center mt-3">
                                 <a href="/forgot-password" class="text-decoration-none text-primary">Forgot Password?</a>
@@ -48,5 +49,10 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Adding the cityscape image at the bottom -->
+    <div class="fixed-bottom cityscape-container" style="text-align: center; z-index: -1; max-height: 1000px;">
+        <img src="/assets/images/cityscape.png" alt="Cityscape" class="cityscape-img" style="width: 90%; max-height: 800px;">
     </div>
 </section>

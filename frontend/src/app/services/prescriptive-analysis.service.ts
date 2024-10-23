@@ -37,7 +37,11 @@ export class PrescriptiveAnalysisService {
         `body was: ${JSON.stringify(error.error)}`
       );
     }
+    // Log the full response for more insight
+    console.error('Full error response:', error);
+  
     // Return a user-friendly message or rethrow the error
     return throwError(() => new Error('Something went wrong; please try again later.'));
   }
+  
 }
