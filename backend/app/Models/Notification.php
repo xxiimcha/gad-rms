@@ -15,4 +15,10 @@ class Notification extends Model
         'deadline_date',
         'is_read',
     ];
+
+    public function barangay()
+    {
+        return $this->belongsTo(Barangay::class, 'barangay', 'name');
+    }
+
 }

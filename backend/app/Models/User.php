@@ -10,11 +10,12 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use App\Notifications\ResetPasswordNotification;
+use App\Models\Barangay;
 
 class User extends Authenticatable implements Auditable
 {
     use HasApiTokens;
-    use HasFactory; 
+    use HasFactory;
     use Notifiable;
     use HasFactory;
     use SoftDeletes;
@@ -67,4 +68,11 @@ class User extends Authenticatable implements Auditable
         $url = env('APP_URL') . '/reset-password?token=' . $token;
         $this->notify(new ResetPasswordNotification($url));
     }
+
+    public function barangayRelation()
+    {
+        \Log::info("Attempting to fetch Barangay for user with barangay ID: " . $this->barangay);
+        return $this->belongsTo(Barangay::class, 'barangay', 'id');
+    }
+
 }

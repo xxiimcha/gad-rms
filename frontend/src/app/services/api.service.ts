@@ -111,20 +111,21 @@ export class ApiService {
         }
     }
     /* START USER */
-    getUserNotification(): Observable<any[]> {
+    getUserNotification(): Observable<any> {
         if (this.authToken) {
             const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authToken}`);
-            return this.http.get<any[]>(`${this.apiUrl}/user/notifications`, { headers }).pipe(
+            return this.http.get<any>(`${this.apiUrl}/notifications/by-barangay`, { headers }).pipe(
                 catchError((error: any) => {
-                    console.error('Error fetching users:', error);
-                    return of([]);
+                    console.error('Error fetching notification:', error);
+                    return of(null);
                 })
             );
         } else {
             console.error('Authentication token is missing');
-            return of([]);
+            return of(null);
         }
     }
+    
     getUsers(): Observable<User[]> {
         if (this.authToken) {
             const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authToken}`);

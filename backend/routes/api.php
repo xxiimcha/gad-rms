@@ -88,9 +88,7 @@ Route::middleware(['auth:sanctum', '2fa'])->group(function () {
 
     Route::get('/archives', [ArchiveController::class, 'archives']);
     Route::post('/restore', [ArchiveController::class, 'restore']);
+    Route::get('/notifications/by-barangay', [NotificationController::class, 'getNotificationsByBarangay']);
 
 
-    Route::post('/notifications', [NotificationController::class, 'store']);
-    Route::get('/notifications', [NotificationController::class, 'index']);
-    Route::patch('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
 });

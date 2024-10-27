@@ -22,7 +22,7 @@ export class CasesVawFormComponent implements OnInit {
     abuseRows: { abuseType: string, abuseValue: number }[] = [];
     selectedAbuses: string[] = [];
 
-    actionList: string[] = ['Issued BPO', 'Referred to LoWDO', 'Referred to PNP', 'Referred to NBI', 'Referred to Court', 'Referred to Medical'];
+    actionList: string[] = ['Issued BPO', 'Referred to LSWDO', 'Referred to PNP', 'Referred to NBI', 'Referred to Court', 'Referred to Medical'];
     actionRows: { action: string, actionValue: number }[] = [];
     selectedActions: string[] = [];
 
