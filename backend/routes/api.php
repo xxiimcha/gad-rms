@@ -15,6 +15,7 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\TwoFactorAuthenticationController;
 use App\Http\Controllers\AnalysisController;
 use App\Http\Controllers\VAWAnalysisController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,4 +88,9 @@ Route::middleware(['auth:sanctum', '2fa'])->group(function () {
 
     Route::get('/archives', [ArchiveController::class, 'archives']);
     Route::post('/restore', [ArchiveController::class, 'restore']);
+
+
+    Route::post('/notifications', [NotificationController::class, 'store']);
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::patch('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
 });

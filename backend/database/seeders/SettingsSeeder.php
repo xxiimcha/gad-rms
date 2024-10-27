@@ -3,9 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-
 use App\Models\Settings;
-use App\Models\User;
 use App\Models\Barangay;
 
 class SettingsSeeder extends Seeder
@@ -17,14 +15,11 @@ class SettingsSeeder extends Seeder
      */
     public function run()
     {
+        $barangays = Barangay::all();
 
-        $users = User::all();
-
-        foreach($users as $user){
-            $brgy = Barangay::findOrFail($user->barangay);
+        foreach ($barangays as $brgy) {
             Settings::create([
-                'email' => $user['email'],
-                'barangay' => $brgy->name
+                'barangay' => $brgy->name  // Assumes 'barangay' is the name field in Barangay table
             ]);
         }
     }

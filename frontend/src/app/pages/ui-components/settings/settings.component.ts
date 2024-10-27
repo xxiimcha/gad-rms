@@ -14,7 +14,7 @@ import { Settings } from '../../../model/settings.model';
 export class SettingsComponent implements OnInit {
 
     settings: Settings[] = [];
-	displayedColumns: string[] = ['User', 'Deadlines', 'Email'];
+	displayedColumns: string[] = ['User', 'Deadlines'];
   	dataSource = new MatTableDataSource<Settings>();
 	@ViewChild(MatPaginator)
 	paginator!: MatPaginator;
