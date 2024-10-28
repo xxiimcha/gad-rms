@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ViolenceAgainstChildren;
 use App\Models\Barangay;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AnalysisController extends Controller
 {
     public function getBarangays()
     {
+        Log::info('Fetching all barangays');
         $barangays = Barangay::all();
         return response()->json($barangays);
     }
@@ -16,19 +19,51 @@ class AnalysisController extends Controller
     public function getPrescriptiveAnalysis(Request $request)
     {
         try {
-            $barangayId = $request->query('barangay', 'All');
+            // Get the authenticated user
+            $currentUser = Auth::user();
 
-            // Fetch data based on barangay selection
-            $cases = $barangayId === 'All'
-                ? ViolenceAgainstChildren::with('barangay')->get()
-                : ViolenceAgainstChildren::where('barangay', $barangayId)->with('barangay')->get();
+            // Check if user is authenticated
+            if (!$currentUser) {
+                Log::error('User not authenticated.');
+                return response()->json(['error' => 'User not authenticated.'], 401);
+            }
+
+            Log::info('Current user role: ' . $currentUser->role);
+
+            $barangayId = $request->query('barangay', 'All');
+            Log::info('Requested barangay ID: ' . $barangayId);
+
+            // Check if the user is a super admin or admin and adjust the data scope
+            if ($currentUser->role === 'super_admin') {
+                // Show all data for super admin
+                Log::info('User is super admin, fetching all cases');
+                $cases = $barangayId === 'All'
+                    ? ViolenceAgainstChildren::with('barangay')->get()
+                    : ViolenceAgainstChildren::where('barangay', $barangayId)->with('barangay')->get();
+            } elseif ($currentUser->role === 'admin') {
+                // Restrict data to the barangay associated with the admin user
+                $adminBarangayId = $currentUser->barangay; // Assuming user's barangay is stored in 'barangay' field
+                Log::info('User is admin, associated barangay ID: ' . $adminBarangayId);
+
+                if ($barangayId === 'All' || $barangayId == $adminBarangayId) {
+                    Log::info('Fetching cases for admin barangay');
+                    $cases = ViolenceAgainstChildren::where('barangay', $adminBarangayId)->with('barangay')->get();
+                } else {
+                    Log::warning('Admin trying to access data from unauthorized barangay');
+                    return response()->json(['error' => 'Access denied to this barangay data.'], 403);
+                }
+            } else {
+                Log::warning('Unauthorized user role detected');
+                return response()->json(['error' => 'Access denied.'], 403);
+            }
 
             // Prepare analysis based on the data
+            Log::info('Preparing analysis data');
             $analysisData = $this->analyzeData($cases);
 
             return response()->json($analysisData);
         } catch (\Exception $e) {
-            \Log::error('Error in getPrescriptiveAnalysis: ' . $e->getMessage());
+            Log::error('Error in getPrescriptiveAnalysis: ' . $e->getMessage());
             return response()->json(['error' => 'An error occurred while processing the analysis.'], 500);
         }
     }
@@ -46,14 +81,12 @@ class AnalysisController extends Controller
 
         $result = [];
         foreach ($groupedData as $key => $casesGroup) {
-            // Get the first case in the group (all cases in a group have the same barangay and month)
             $sampleCase = $casesGroup[0];
 
-            // Retrieve the barangay name from the Barangay model based on the case's barangay ID
             $barangay = Barangay::find($sampleCase->barangay);
             $barangayName = $barangay ? $barangay->name : 'Unknown Barangay';
+            Log::info("Analyzing cases for Barangay: {$barangayName}, Month: {$sampleCase->month}");
 
-            // Find the case type with the maximum count
             $caseTypes = [
                 'Physical Abuse' => $sampleCase->physical_abuse,
                 'Sexual Abuse' => $sampleCase->sexual_abuse,
@@ -64,6 +97,7 @@ class AnalysisController extends Controller
 
             $maxType = array_keys($caseTypes, max($caseTypes))[0];
             $maxCount = $caseTypes[$maxType];
+            Log::info("Most common case type: {$maxType} with count {$maxCount}");
 
             $recommendedAction = $this->getRecommendedAction($maxType);
 

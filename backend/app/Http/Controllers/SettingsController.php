@@ -43,7 +43,7 @@ class SettingsController extends Controller
             $settings->update($updates);
 
             // Create notification with the actual deadline date
-            $this->createNotification($settings->barangay, 'Setting updated with new deadline', $updates['deadline']);
+            $this->createNotification($settings->barangay, 'VAW and VAC case report must be submitted on or before', $updates['deadline']);
         }
 
         return new SettingsResource($settings);

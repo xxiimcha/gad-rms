@@ -352,12 +352,6 @@ export class CasesVacFormComponent implements OnInit {
 
     calculateTotalCases(): number {
         let total = 0;
-        this.genderRows.forEach(row => {
-            total += row.genderValue;
-        });
-        this.ageRows.forEach(row => {
-            total += row.ageValue;
-        });
         this.abuseRows.forEach(row => {
             total += row.abuseValue;
         });

@@ -15,7 +15,7 @@ class ViolenceAgainstChildrenSeeder extends Seeder
      */
     public function run()
     {
-        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'];
+        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October'];
         $barangays = Barangay::all();
 
         $vacs = []; // Initialize the array here
@@ -23,42 +23,37 @@ class ViolenceAgainstChildrenSeeder extends Seeder
         foreach ($barangays as $b) {
             foreach ($months as $m) {
                 // Generate random values
-                $male = rand(1, 10);
-                $female = rand(1, 10);
-                $range_one = rand(1, 10);
-                $range_two = rand(1, 10);
-                $range_three = rand(1, 10);
-                $range_four = rand(1, 10);
-                $range_five = rand(1, 10);
-                $physical_abuse = rand(1, 10);
-                $sexual_abuse = rand(1, 10);
-                $psychological_abuse = rand(1, 10);
-                $neglect = rand(1, 10);
-                $others = rand(1, 10);
-                $immediate_family = rand(1, 10);
-                $other_close_relative = rand(1, 10);
-                $acquaintance = rand(1, 10);
-                $stranger = rand(1, 10);
-                $local_official = rand(1, 10);
-                $law_enforcer = rand(1, 10);
-                $other_guardians = rand(1, 10);
-                $referred_pnp = rand(1, 10);
-                $referred_nbi = rand(1, 10);
-                $referred_medical = rand(1, 10);
-                $referred_legal_assist = rand(1, 10);
-                $referred_others = rand(1, 10);
-                $trainings = rand(1, 10);
-                $counseling = rand(1, 10);
-                $iec = rand(1, 10);
-                $fund_allocation = rand(1, 10);
+                $male = rand(1, 5);
+                $female = rand(1, 5);
+                $range_one = rand(1, 5);
+                $range_two = rand(1, 5);
+                $range_three = rand(1, 5);
+                $range_four = rand(1, 5);
+                $range_five = rand(1, 5);
+                $physical_abuse = rand(1, 5);
+                $sexual_abuse = rand(1, 5);
+                $psychological_abuse = rand(1, 5);
+                $neglect = rand(1, 5);
+                $others = rand(1, 5);
+                $immediate_family = rand(1, 5);
+                $other_close_relative = rand(1, 5);
+                $acquaintance = rand(1, 5);
+                $stranger = rand(1, 5);
+                $local_official = rand(1, 5);
+                $law_enforcer = rand(1, 5);
+                $other_guardians = rand(1, 5);
+                $referred_pnp = rand(1, 5);
+                $referred_nbi = rand(1, 5);
+                $referred_medical = rand(1, 5);
+                $referred_legal_assist = rand(1, 5);
+                $referred_others = rand(1, 5);
+                $trainings = rand(1, 5);
+                $counseling = rand(1, 5);
+                $iec = rand(1, 5);
+                $fund_allocation = rand(1, 5);
 
                 // Calculate the total for number_vac
-                $number_vac = $male + $female + $range_one + $range_two + $range_three + $range_four + $range_five +
-                              $physical_abuse + $sexual_abuse + $psychological_abuse + $neglect + $others +
-                              $immediate_family + $other_close_relative + $acquaintance + $stranger +
-                              $local_official + $law_enforcer + $other_guardians + $referred_pnp +
-                              $referred_nbi + $referred_medical + $referred_legal_assist + $referred_others +
-                              $trainings + $counseling + $iec + $fund_allocation;
+                $number_vac = $physical_abuse + $sexual_abuse + $psychological_abuse + $neglect + $others;
 
                 // Store the data in the array
                 $vacs[] = [

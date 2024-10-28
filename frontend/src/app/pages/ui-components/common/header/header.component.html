@@ -15,8 +15,7 @@
 		<ng-container *ngIf="notificationList.length; else noNotifications">
 			<button mat-menu-item *ngFor="let notification of notificationList; let i = index;" (click)="openNotification(notification)">
 				<div *ngIf="!notification.deadline">
-					{{ notification.message }} - Deadline: {{ notification.deadline_date | date:'MM/dd/yyyy' }}
-
+					{{ notification.message }} {{ notification.deadline_date | date:'MMMM d, y' }}
 				</div>
 				<!-- Display the deadline message -->
 				<span *ngIf="notification.deadline">

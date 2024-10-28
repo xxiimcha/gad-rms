@@ -16,30 +16,28 @@ class ViolenceAgainstWomenSeeder extends Seeder
      */
     public function run()
     {
-        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'];
+        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October'];
         $barangays = Barangay::all();
         $vaws = [];
 
         foreach ($barangays as $b) {
             foreach ($months as $m) {
-                $physical_abuse = rand(1,10);
-                $sexual_abuse = rand(1,10);
-                $psychological_abuse = rand(1,10);
-                $economic_abuse = rand(1,10);
-                $issued_bpo = rand(1,10);
-                $referred_lowdo = rand(1,10);
-                $referred_pnp = rand(1,10);
-                $referred_nbi = rand(1,10);
-                $referred_court = rand(1,10);
-                $referred_medical = rand(1,10);
-                $trainings = rand(1,10);
-                $counseling = rand(1,10);
-                $iec = rand(1,10);
-                $fund_allocation = rand(1,10);
+                $physical_abuse = rand(1,5);
+                $sexual_abuse = rand(1,5);
+                $psychological_abuse = rand(1,5);
+                $economic_abuse = rand(1,5);
+                $issued_bpo = rand(1,5);
+                $referred_lowdo = rand(1,5);
+                $referred_pnp = rand(1,5);
+                $referred_nbi = rand(1,5);
+                $referred_court = rand(1,5);
+                $referred_medical = rand(1,5);
+                $trainings = rand(1,5);
+                $counseling = rand(1,5);
+                $iec = rand(1,5);
+                $fund_allocation = rand(1,5);
 
-                $number_vaw = $physical_abuse + $sexual_abuse + $psychological_abuse + $economic_abuse +
-                              $issued_bpo + $referred_lowdo + $referred_pnp + $referred_nbi + $referred_court + $referred_medical +
-                              $trainings + $counseling + $iec + $fund_allocation;
+                $number_vaw = $physical_abuse + $sexual_abuse + $psychological_abuse + $economic_abuse;
 
                 $vaws[] = [
                     'month' => $m,

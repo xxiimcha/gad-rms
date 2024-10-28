@@ -35,11 +35,12 @@ Route::post('reset-password', [ForgotPasswordController::class, 'reset']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/2fa/verify', [TwoFactorAuthenticationController::class, 'verify']);
     Route::get('/2fa/generate', [UserController::class, 'email_generated_session_otp']);
+    //Analysis Controller
+    Route::get('/vaw-predictive-analysis', [VawAnalysisController::class, 'getPredictiveAnalysis']);
+    Route::get('/prescriptive-analysis', [AnalysisController::class, 'getPrescriptiveAnalysis']);
+
 });
 
-//Analysis Controller
-Route::get('/vaw-predictive-analysis', [VawAnalysisController::class, 'getPredictiveAnalysis']);
-Route::get('/prescriptive-analysis', [AnalysisController::class, 'getPrescriptiveAnalysis']);
 Route::middleware(['auth:sanctum', '2fa'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -89,6 +90,5 @@ Route::middleware(['auth:sanctum', '2fa'])->group(function () {
     Route::get('/archives', [ArchiveController::class, 'archives']);
     Route::post('/restore', [ArchiveController::class, 'restore']);
     Route::get('/notifications/by-barangay', [NotificationController::class, 'getNotificationsByBarangay']);
-
 
 });

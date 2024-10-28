@@ -34,7 +34,7 @@
                         </select>
                     </div>
                     <div class="col-4">
-                        <input type="number" class="form-control" [(ngModel)]="row.genderValue" min="0" (ngModelChange)="updateTotalProgramValue()" [disabled]="isSuperAdmin || vacStatus === 'Received'">
+                        <input type="number" class="form-control" [(ngModel)]="row.genderValue" min="0" [disabled]="isSuperAdmin || vacStatus === 'Received'">
                     </div>
                     <div class="col-4" *ngIf="!isSuperAdmin">
                         <button class="btn btn-primary" (click)="addGenderRow(i)" [disabled]="!row.gender && i != 0"> + </button> &nbsp;
@@ -50,7 +50,7 @@
                         </select>
                     </div>
                     <div class="col-4">
-                        <input type="number" class="form-control" [(ngModel)]="row.ageValue" min="0" (ngModelChange)="updateTotalProgramValue()" [disabled]="isSuperAdmin || vacStatus === 'Received'">
+                        <input type="number" class="form-control" [(ngModel)]="row.ageValue" min="0" [disabled]="isSuperAdmin || vacStatus === 'Received'">
                     </div>
                     <div class="col-4" *ngIf="!isSuperAdmin">
                         <button class="btn btn-primary" (click)="addAgeRow(i)" [disabled]="!row.age && i != 0"> + </button> &nbsp;
