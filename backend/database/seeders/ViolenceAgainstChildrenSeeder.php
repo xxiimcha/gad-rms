@@ -15,7 +15,7 @@ class ViolenceAgainstChildrenSeeder extends Seeder
      */
     public function run()
     {
-        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October'];
+        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September'];
         $barangays = Barangay::all();
 
         $vacs = []; // Initialize the array here
