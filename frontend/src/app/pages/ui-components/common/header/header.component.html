@@ -16,6 +16,13 @@
 			<button mat-menu-item *ngFor="let notification of notificationList; let i = index;" (click)="openNotification(notification)">
 				<div *ngIf="!notification.deadline">
 					{{ notification.message }} {{ notification.deadline_date | date:'MMMM d, y' }}
+					{{ i + 1 }}.
+					{{ notification.status === 'Submitted'
+					? (notification.type + ' Case ' + notification.status + ' by barangay ' + notification.barangay)
+					: notification.status === 'Received'
+					? (notification.type + ' Case ' + notification.status + ' by GAD')
+					: null
+					}}
 				</div>
 				<!-- Display the deadline message -->
 				<span *ngIf="notification.deadline">

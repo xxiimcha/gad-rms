@@ -676,6 +676,7 @@
 			<mat-card-content class="p-24" style="background-color: #f9f9f9; padding: 32px; border-left: 5px solid #ff4081;">
 				<!-- Header Section with Select Barangay Dropdown -->
 				<div class="d-flex w-100 mb-3" style="align-items: center; justify-content: space-between;">
+					<mat-card-title style="font-weight: bold; font-size: 1.5rem; color: ff4081#ff4081;">Violence Against Women Prescriptive Analysis</mat-card-title>
 					<div *ngIf="currentUserRole === 'super admin'" style="width: 250px;">
 						<mat-form-field appearance="outline" style="width: 100%; margin-bottom: 0;">
 							<mat-select [(ngModel)]="currentBarangay" (selectionChange)="fetchVawAnalysis()" placeholder="Select Barangay">
@@ -691,17 +692,8 @@
 					</div>
 				</div>
 	
-				<!-- Navigation for Previous and Next Months -->
-				<div class="d-flex w-100 align-items-center justify-content-between mb-4">
-					<button mat-stroked-button color="accent" (click)="previousMonth()" [disabled]="currentMonthIndex === 0" style="margin-right: 8px;">
-						Previous
-					</button>
-					<mat-card-title style="font-weight: 600; font-size: 1.5rem; text-align: center; color: #333;">
-						Violence Against Women Prescriptive Analysis
-					</mat-card-title>
-					<button mat-stroked-button color="accent" (click)="nextMonth()" style="margin-left: 8px;">
-						Next
-					</button>
+				<div class="d-flex w-100 align-items-center justify-content-between mb-3">
+					<mat-card-title style="font-weight: 500; font-size: 1.3rem;">{{ getCurrentMonth() }}</mat-card-title>
 				</div>
 	
 				<div class="p-24" style="padding: 24px;">
@@ -767,15 +759,8 @@
 					</div>
 				</div>
 				
-				<!-- Navigation for Previous and Next Months -->
 				<div class="d-flex w-100 align-items-center justify-content-between mb-3">
-					<button mat-stroked-button color="primary" (click)="previousMonth()" [disabled]="currentMonthIndex === 0">
-						Previous
-					</button>
 					<mat-card-title style="font-weight: 500; font-size: 1.3rem;">{{ getCurrentMonth() }}</mat-card-title>
-					<button mat-stroked-button color="primary" (click)="nextMonth()" [disabled]="currentMonthIndex === uniqueMonths.length - 1">
-						Next
-					</button>
 				</div>
 	
 				<!-- Content Section for Prescriptive Analysis -->
