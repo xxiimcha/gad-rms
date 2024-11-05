@@ -42,21 +42,19 @@ class ResetPasswordNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $origin = substr($this->url, 0, strpos($this->url, '/reset-password'));
-        $origin . str_replace($origin, '', $this->url);
+        // Extract only the token part from the original URL
+        $urlParts = parse_url($this->url);
+        $token = isset($urlParts['query']) ? $urlParts['query'] : '';
+
+        // Construct the final URL
+        $resetUrl = 'http://localhost:4200/reset-password?' . $token . '&email=' . urlencode($notifiable->email);
 
         return (new MailMessage())
-            ->line('You can use the following button to reset your password: ')
-            ->action(
-                'Reset your password',
-                url(
-                    // config('app.url') .
-                        'http://localhost:4200' .
-                        $this->url .
-                        '&email=' .
-                        $notifiable->email
-                )
-            );
+            ->subject('Reset Password Notification')
+            ->greeting('Hello!')
+            ->line('You can use the following button to reset your password:')
+            ->action('Reset your password', $resetUrl)
+            ->salutation('Regards, GAD RMS');
     }
 
     /**
