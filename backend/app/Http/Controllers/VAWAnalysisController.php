@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\ViolenceAgainstWomen;
 use App\Models\Barangay;
 
@@ -10,12 +11,24 @@ class VAWAnalysisController extends Controller
     public function getPredictiveAnalysis(Request $request)
     {
         try {
+            $currentUser = $request->user();
             $barangay = $request->query('barangay', null);
 
-            // Fetch data based on the barangay selection with the correct relationship
-            $cases = $barangay
-                ? ViolenceAgainstWomen::where('barangay', $barangay)->with('barangayRelation')->get()
-                : ViolenceAgainstWomen::with('barangayRelation')->get();
+            // Role-based filtering
+            if ($currentUser->role === 'super admin') {
+                // Super admin can view all data, filtered by the optional barangay parameter
+                $cases = $barangay
+                    ? ViolenceAgainstWomen::where('barangay', $barangay)->with('barangayRelation')->get()
+                    : ViolenceAgainstWomen::with('barangayRelation')->get();
+            } elseif ($currentUser->role === 'admin') {
+                // Admin can only view data for their assigned barangay
+                $cases = ViolenceAgainstWomen::where('barangay', $currentUser->barangay)
+                    ->with('barangayRelation')
+                    ->get();
+            } else {
+                // If the role does not match "super admin" or "admin", return an unauthorized error
+                return response()->json(['error' => 'Unauthorized access.'], 403);
+            }
 
             // Perform analysis logic and prepare the data
             $analysisData = $this->analyzeData($cases);
@@ -76,5 +89,3 @@ class VAWAnalysisController extends Controller
         }
     }
 }
-
-?>

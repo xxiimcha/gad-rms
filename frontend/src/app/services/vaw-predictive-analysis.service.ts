@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 interface PredictiveAnalysis {
@@ -19,11 +19,14 @@ export class VawPredictiveAnalysisService {
   constructor(private http: HttpClient) {}
 
   getPredictiveAnalysis(barangay?: string): Observable<PredictiveAnalysis[]> {
+    const token = localStorage.getItem('authToken'); // Retrieve token from Local Storage
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    
     let params = new HttpParams();
     if (barangay) {
       params = params.set('barangay', barangay);
     }
 
-    return this.http.get<PredictiveAnalysis[]>(this.apiUrl, { params });
+    return this.http.get<PredictiveAnalysis[]>(this.apiUrl, { headers, params });
   }
 }

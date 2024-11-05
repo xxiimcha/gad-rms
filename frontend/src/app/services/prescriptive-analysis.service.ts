@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -18,30 +18,21 @@ export class PrescriptiveAnalysisService {
 
   constructor(private http: HttpClient) { }
 
-  // Method to fetch prescriptive analysis data
   getPrescriptiveAnalysis(): Observable<PrescriptiveAnalysis[]> {
-    return this.http.get<PrescriptiveAnalysis[]>(this.apiUrl).pipe(
+    const token = localStorage.getItem('authToken'); // Retrieve token from Local Storage
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    
+    return this.http.get<PrescriptiveAnalysis[]>(this.apiUrl, { headers }).pipe(
       catchError(this.handleError)
     );
   }
 
-  // Method to handle errors in HTTP requests
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
-      // Client-side or network error
       console.error('An error occurred:', error.error.message);
     } else {
-      // Backend returned an unsuccessful response code
-      console.error(
-        `Backend returned code ${error.status}, ` +
-        `body was: ${JSON.stringify(error.error)}`
-      );
+      console.error(`Backend returned code ${error.status}, body was: ${JSON.stringify(error.error)}`);
     }
-    // Log the full response for more insight
-    console.error('Full error response:', error);
-  
-    // Return a user-friendly message or rethrow the error
     return throwError(() => new Error('Something went wrong; please try again later.'));
   }
-  
 }

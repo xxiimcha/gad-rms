@@ -143,12 +143,12 @@ class ViolenceAgainstWomenController extends Controller
 
     public function store(Request $request)  {
         $data = $this->build_data($request);
-        
+
         $violenceAgainstWomen = ViolenceAgainstWomen::create($data);
 
         return new ViolenceAgainstWomenResource($violenceAgainstWomen);
     }
-    
+
     public function update(Request $request)
     {
         $vaws = ViolenceAgainstWomen::findOrFail($request->id);
@@ -186,7 +186,7 @@ class ViolenceAgainstWomenController extends Controller
             'barangay' => $request->barangay ?? 0,
             'status' => $request->status
         ];
-        
+
         if(isset($request->abuseRows)) {
             // Handling abuseRows
             foreach ($request->abuseRows as $row) {
@@ -206,7 +206,7 @@ class ViolenceAgainstWomenController extends Controller
                 }
             }
         }
-        
+
         if(isset($request->actionRows)) {
         // Handling actionRows
             foreach ($request->actionRows as $row) {
@@ -232,7 +232,7 @@ class ViolenceAgainstWomenController extends Controller
                 }
             }
         }
-        
+
         if(isset($request->programsRows)) {
         // Handling programsRows
             foreach ($request->programsRows as $row) {
@@ -257,27 +257,27 @@ class ViolenceAgainstWomenController extends Controller
 
     public function get_all_vaws_by_param(Request $request) {
         $currentUser = $request->user();
-        
+
         // Define months for iteration
         $monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        
+
         // Get all barangays
         $barangays = Barangay::all()->pluck('name');
         $vawsData = [];
-        
+
         foreach ($barangays as $barangay) {
             $barangayData = [
                 'name' => $barangay,
                 'data' => []
             ];
-            
+
             // Get barangay ID
             $brgy = Barangay::where('name', $barangay)->first();
-            
+
             if (!$brgy) {
                 continue; // Skip if barangay not found
             }
-            
+
             foreach ($monthNames as $index => $month) {
                 $vaw = ViolenceAgainstWomen::where('barangay', $brgy['id'])
                 ->where('month', $month)
@@ -286,31 +286,31 @@ class ViolenceAgainstWomenController extends Controller
                     Carbon::create(date('Y'), 12, 31)->endOfYear()
                 ])
                 ->first();
-                
+
                 // Append the data for the month
                 $barangayData['data'][] = [
                     'month' => $month,
                     'total' => $vaw->number_vaw ?? 0
                 ];
             }
-            
+
             $vawsData[] = $barangayData;
         }
 
         return response()->json($vawsData);
     }
-    
+
     public function get_vaws_percentage(Request $request) {
         $currentMonth = $request->month;
         $data = ViolenceAgainstWomen::with('barangay')->get();
         $currentMonthData = array_filter($data->toArray(), function($entry) use ($currentMonth) {
             return $entry['month'] === $currentMonth;
         });
-    
+
         $totalPhysicalCases = array_reduce($currentMonthData, function($carry, $entry) {
             return $carry + $entry['physical_abuse'];
         }, 0);
-    
+
         $totalSexualCases = array_reduce($currentMonthData, function($carry, $entry) {
             return $carry + $entry['sexual_abuse'];
         }, 0);
@@ -322,7 +322,7 @@ class ViolenceAgainstWomenController extends Controller
         $totalEconomicCases = array_reduce($currentMonthData, function($carry, $entry) {
             return $carry + $entry['economic_abuse'];
         }, 0);
-    
+
         $groupedData = [];
         foreach ($currentMonthData as $entry) {
             $barangayName = $entry['barangay']['name'];
@@ -339,12 +339,12 @@ class ViolenceAgainstWomenController extends Controller
             $groupedData[$barangayName]['economic'] += $entry['economic_abuse'];
             $groupedData[$barangayName]['psychological'] += $entry['psychological_abuse'];
         }
-    
+
         $highestPhysical = [
             'barangay' => '',
             'percentage' => 0
         ];
-    
+
         $highestSexual = [
             'barangay' => '',
             'percentage' => 0
@@ -359,7 +359,7 @@ class ViolenceAgainstWomenController extends Controller
             'barangay' => '',
             'percentage' => 0
         ];
-    
+
         foreach ($groupedData as $barangay => $cases) {
             // Calculate physical abuse percentage
             $physicalPercentage = ($totalPhysicalCases > 0) ? round(($cases['physical'] / $totalPhysicalCases) * 100, 2) : 0;
@@ -367,7 +367,7 @@ class ViolenceAgainstWomenController extends Controller
                 $highestPhysical['barangay'] = $barangay;
                 $highestPhysical['percentage'] = $physicalPercentage;
             }
-    
+
             // Calculate sexual abuse percentage
             $sexualPercentage = ($totalSexualCases > 0) ? round(($cases['sexual'] / $totalSexualCases) * 100, 2) : 0;
             if ($sexualPercentage > $highestSexual['percentage']) {
@@ -389,7 +389,7 @@ class ViolenceAgainstWomenController extends Controller
                 $highestEconomic['percentage'] = $economicPercentage;
             }
         }
-    
+
         return response()->json([
             'physical' => $highestPhysical,
             'sexual' => $highestSexual,
@@ -400,13 +400,13 @@ class ViolenceAgainstWomenController extends Controller
 
     public function forecast() {
         $casesData = ViolenceAgainstWomen::all();
-    
+
         $groupedData = [];
         foreach ($casesData as $row) {
             $barangayId = $row->barangay;
             $month = $row->month;
             $cases = (int) $row->number_vaw;
-    
+
             $barangay = Barangay::find($barangayId);
             if ($barangay) {
                 $barangayName = $barangay->name;
@@ -416,22 +416,22 @@ class ViolenceAgainstWomenController extends Controller
                 ];
             }
         }
-    
+
         $forecasts = [];
-    
+
         foreach ($groupedData as $barangay => $data) {
             $monthlyTotals = array_fill(0, 12, ['month' => '', 'total' => 0]);
-    
+
             foreach ($data as $monthData) {
                 $monthIndex = date('n', strtotime($monthData['month'])) - 1;
                 $monthlyTotals[$monthIndex]['month'] = date('F', mktime(0, 0, 0, $monthIndex + 1, 1));
                 $monthlyTotals[$monthIndex]['total'] += $monthData['total'];
             }
-    
+
             $finalData = array_filter($monthlyTotals, function($monthData) {
                 return $monthData['month'] !== '';
             });
-    
+
             $lastIndex = count($finalData) - 1;
             for ($i = count($finalData) - 1; $i >= 0; $i--) {
                 if ($finalData[$i]['total'] > 0) {
@@ -439,21 +439,23 @@ class ViolenceAgainstWomenController extends Controller
                     break;
                 }
             }
-            
+
             $nextMonthIndex = ($lastIndex + 2) % 12;
             $forecastValue = $finalData[$lastIndex]['total'];
-    
+
             $finalData[] = [
                 'month' => date('F', mktime(0, 0, 0, $nextMonthIndex + 1, 1)),
-                'total' => max(0, $forecastValue) 
+                'total' => max(0, $forecastValue)
             ];
-    
+
             $forecasts[] = [
                 'name' => $barangay,
                 'data' => array_values($finalData),
             ];
         }
-    
+
         return response()->json($forecasts);
-    }   
+    }
+
+
 }
