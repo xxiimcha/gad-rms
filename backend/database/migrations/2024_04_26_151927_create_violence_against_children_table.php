@@ -16,6 +16,7 @@ class CreateViolenceAgainstChildrenTable extends Migration
         Schema::create('violence_against_children', function (Blueprint $table) {
             $table->id();
             $table->string('month')->nullable();
+            $table->integer('year')->nullable(); // Added year column
             $table->integer('number_vac')->nullable();
             $table->integer('male')->nullable();
             $table->integer('female')->nullable();
@@ -53,7 +54,7 @@ class CreateViolenceAgainstChildrenTable extends Migration
             $table->string('barangay')->nullable();
 
             $table->string('status')->nullable();
-            
+
             $table->timestamps();
             $table->softdeletes();
         });

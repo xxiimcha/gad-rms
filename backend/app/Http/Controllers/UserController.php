@@ -26,7 +26,7 @@ class UserController extends Controller
             $brgy = Barangay::findOrFail($user['barangay']);
             $user['barangay'] = $brgy ? $brgy->name : '' ;
         }
-        
+
         return UserResource::collection($users);
     }
 
@@ -170,7 +170,7 @@ class UserController extends Controller
                 ->where('email', $currentUser->email)
                 ->whereNull('deleted_at')
                 ->get(['id', 'email', 'barangay', 'deadline', 'created_at', 'updated_at']);
-    
+
             $notificationData = $notificationData->merge($additionalNotifications);
         }
 
@@ -182,7 +182,7 @@ class UserController extends Controller
         $user = Auth::user();
         $otp = rand(100000, 999999);
         $otp_expires_at = \Carbon\Carbon::now()->addMinutes(1);
-        
+
         $user->update([
             'otp' => $otp,
             'otp_expires_at' => $otp_expires_at,

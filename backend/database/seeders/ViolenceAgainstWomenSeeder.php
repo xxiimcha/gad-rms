@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-
 use App\Models\ViolenceAgainstWomen;
 use App\Models\Barangay;
+use Carbon\Carbon;
 
 class ViolenceAgainstWomenSeeder extends Seeder
 {
@@ -16,73 +16,64 @@ class ViolenceAgainstWomenSeeder extends Seeder
      */
     public function run()
     {
-        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November'];
         $barangays = Barangay::all();
+        $currentYear = Carbon::now()->year;
+        $currentMonth = Carbon::now()->month;
+
         $vaws = [];
 
         foreach ($barangays as $b) {
-            foreach ($months as $m) {
-                $physical_abuse = rand(1,5);
-                $sexual_abuse = rand(1,5);
-                $psychological_abuse = rand(1,5);
-                $economic_abuse = rand(1,5);
-                $issued_bpo = rand(1,5);
-                $referred_lowdo = rand(1,5);
-                $referred_pnp = rand(1,5);
-                $referred_nbi = rand(1,5);
-                $referred_court = rand(1,5);
-                $referred_medical = rand(1,5);
-                $trainings = rand(1,5);
-                $counseling = rand(1,5);
-                $iec = rand(1,5);
-                $fund_allocation = rand(1,5);
+            foreach (range(2020, $currentYear) as $year) { // Iterate over the years
+                $months = $year == $currentYear
+                    ? range(1, $currentMonth) // Current year: up to the current month
+                    : range(1, 12); // Past years: all months
 
-                $number_vaw = $physical_abuse + $sexual_abuse + $psychological_abuse + $economic_abuse;
+                foreach ($months as $monthNumber) {
+                    $month = Carbon::createFromDate(null, $monthNumber)->format('F'); // Convert to month name
 
-                $vaws[] = [
-                    'month' => $m,
-                    'physical_abuse' => $physical_abuse,
-                    'sexual_abuse' => $sexual_abuse,
-                    'psychological_abuse' => $psychological_abuse,
-                    'economic_abuse' => $economic_abuse,
-                    'issued_bpo' => $issued_bpo,
-                    'referred_lowdo' => $referred_lowdo,
-                    'referred_pnp' => $referred_pnp,
-                    'referred_nbi' => $referred_nbi,
-                    'referred_court' => $referred_court,
-                    'referred_medical' => $referred_medical,
-                    'barangay' => $b->id,
-                    'trainings' => $trainings,
-                    'counseling' => $counseling,
-                    'iec' => $iec,
-                    'fund_allocation' => $fund_allocation,
-                    'number_vaw' => $number_vaw,
-                    'status' => 'Completed'
-                ];
+                    $physical_abuse = rand(1, 5);
+                    $sexual_abuse = rand(1, 5);
+                    $psychological_abuse = rand(1, 5);
+                    $economic_abuse = rand(1, 5);
+                    $issued_bpo = rand(1, 5);
+                    $referred_lowdo = rand(1, 5);
+                    $referred_pnp = rand(1, 5);
+                    $referred_nbi = rand(1, 5);
+                    $referred_court = rand(1, 5);
+                    $referred_medical = rand(1, 5);
+                    $trainings = rand(1, 5);
+                    $counseling = rand(1, 5);
+                    $iec = rand(1, 5);
+                    $fund_allocation = rand(1, 5);
+
+                    $number_vaw = $physical_abuse + $sexual_abuse + $psychological_abuse + $economic_abuse;
+
+                    $vaws[] = [
+                        'month' => $month,
+                        'year' => $year,
+                        'physical_abuse' => $physical_abuse,
+                        'sexual_abuse' => $sexual_abuse,
+                        'psychological_abuse' => $psychological_abuse,
+                        'economic_abuse' => $economic_abuse,
+                        'issued_bpo' => $issued_bpo,
+                        'referred_lowdo' => $referred_lowdo,
+                        'referred_pnp' => $referred_pnp,
+                        'referred_nbi' => $referred_nbi,
+                        'referred_court' => $referred_court,
+                        'referred_medical' => $referred_medical,
+                        'barangay' => $b->id,
+                        'trainings' => $trainings,
+                        'counseling' => $counseling,
+                        'iec' => $iec,
+                        'fund_allocation' => $fund_allocation,
+                        'number_vaw' => $number_vaw,
+                        'status' => 'Completed',
+                    ];
+                }
             }
         }
 
-        foreach($vaws as $vaw){
-            ViolenceAgainstWomen::create([
-                'month' => $vaw['month'],
-                'barangay' => $vaw['barangay'],
-                'number_vaw' => $vaw['number_vaw'],
-                'physical_abuse' => $vaw['physical_abuse'],
-                'sexual_abuse' => $vaw['sexual_abuse'],
-                'psychological_abuse' => $vaw['psychological_abuse'],
-                'economic_abuse' => $vaw['economic_abuse'],
-                'issued_bpo' => $vaw['issued_bpo'],
-                'referred_lowdo' => $vaw['referred_lowdo'],
-                'referred_pnp' => $vaw['referred_pnp'],
-                'referred_nbi' => $vaw['referred_nbi'],
-                'referred_court' => $vaw['referred_court'],
-                'referred_medical' => $vaw['referred_medical'],
-                'trainings' => $vaw['trainings'],
-                'counseling' => $vaw['counseling'],
-                'iec' => $vaw['iec'],
-                'fund_allocation' => $vaw['fund_allocation'],
-                'status' => $vaw['status'],
-            ]);
-        }
+        // Bulk insert data for efficiency
+        ViolenceAgainstWomen::insert($vaws);
     }
 }
