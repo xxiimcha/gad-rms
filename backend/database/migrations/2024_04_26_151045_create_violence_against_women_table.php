@@ -16,7 +16,6 @@ class CreateViolenceAgainstWomenTable extends Migration
         Schema::create('violence_against_women', function (Blueprint $table) {
             $table->id();
             $table->string('month')->nullable();
-            $table->integer('year')->nullable(); // Added year column
             $table->integer('number_vaw')->nullable();
             $table->integer('physical_abuse')->nullable();
             $table->integer('sexual_abuse')->nullable();

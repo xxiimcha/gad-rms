@@ -16,6 +16,7 @@ class ViolenceAgainstWomenResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'year' => $this->year,
             'physical_abuse' => $this->physical_abuse ?? 0,
             'sexual_abuse' => $this->sexual_abuse ?? 0,
             'psychological_abuse' => $this->psychological_abuse ?? 0,
