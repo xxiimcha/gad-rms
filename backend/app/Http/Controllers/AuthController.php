@@ -16,7 +16,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $token = $user->createToken('MyAppToken')->plainTextToken;
-            
+
             Audits::create([
                 'user_id' => $user->id,
                 'auditable_type' => 'App\Models\User',
@@ -33,7 +33,9 @@ class AuthController extends Controller
                 'role' => $user->role,
                 'currentUser' => $user->id,
                 'barangay' => $user->barangay,
-                'twoFactorAuth' => $user->two_factor
+                'twoFactorAuth' => $user->two_factor,
+                'contact_number' => $user->contact_number, // Include contact number
+                'email' => $user->email                   // Include email
             ], 200);
         } else {
             return response()->json(['error' => 'Unauthorized'], 401);

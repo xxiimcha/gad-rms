@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, tap  } from 'rxjs/operators';
 import { User } from '../model/user.model';
 import { ViolenceAgainstWomen } from '../model/vaw.model';
@@ -21,20 +21,27 @@ export class ApiService {
         this.authToken = localStorage.getItem('authToken');
     }
 
-    generateOtp(): Observable<any> {
+    generateOtp(method: string): Observable<any> {
         if (this.authToken) {
             const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authToken}`);
-            return this.http.get<any>(`${this.apiUrl}/2fa/generate`, { headers }).pipe(
+            const params = { deliveryMethod: method }; // Add the delivery method as a query parameter
+    
+            console.log(`Attempting to generate OTP via ${method}...`); // Log the method of OTP delivery
+    
+            return this.http.get<any>(`${this.apiUrl}/2fa/generate`, { headers, params }).pipe(
                 tap((response) => {
-                    console.log(response)
-                    
+                    console.log('OTP Generation Response:', response); // Log the successful response
+                }),
+                catchError((error) => {
+                    console.error('OTP Generation Error:', error); // Log the error response
+                    return throwError(error); // Re-throw the error for handling by the caller
                 })
             );
         } else {
-            console.error('Authentication token is missing');
-            return of([]);
+            console.error('Authentication token is missing'); // Log missing authentication token
+            return of([]); // Return an empty observable to prevent app crashes
         }
-    }
+    }    
 
     verifyOtp(otp: string): Observable<any> {
         if (this.authToken) {

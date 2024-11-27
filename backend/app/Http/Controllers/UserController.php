@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
-
-use App\Mail\OTP;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -177,25 +177,92 @@ class UserController extends Controller
         return response()->json($notificationData);
     }
 
-    public function email_generated_session_otp()
+
+    public function sendSmsViaSemaphore($phoneNumber, $message)
     {
-        $user = Auth::user();
-        $otp = rand(100000, 999999);
-        $otp_expires_at = \Carbon\Carbon::now()->addMinutes(1);
+        $apiKey = env('SEMAPHORE_API_KEY'); // Your API key
+        $senderName = env('SEMAPHORE_SENDER_NAME', 'SEMAPHORE'); // Default sender name
 
-        $user->update([
-            'otp' => $otp,
-            'otp_expires_at' => $otp_expires_at,
-        ]);
+        $ch = curl_init();
 
+        $parameters = [
+            'apikey' => $apiKey,
+            'number' => $phoneNumber,
+            'message' => $message,
+            'sendername' => $senderName,
+        ];
+
+        curl_setopt($ch, CURLOPT_URL, 'https://semaphore.co/api/v4/messages');
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($parameters));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Disable SSL verification
+
+        $output = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            \Log::error('Semaphore cURL Error: ' . curl_error($ch));
+            curl_close($ch);
+            return [
+                'success' => false,
+                'message' => 'Failed to send SMS.',
+                'error' => curl_error($ch),
+            ];
+        }
+
+        curl_close($ch);
+
+        return json_decode($output, true); // Return decoded JSON response
+    }
+
+    public function email_generated_session_otp(Request $request)
+{
+    $user = Auth::user();
+    $otp = rand(100000, 999999); // Generate a 6-digit OTP
+    $otp_expires_at = \Carbon\Carbon::now()->addMinutes(1); // OTP expiration time
+
+    // Save OTP and expiration time in the user's record
+    $user->update([
+        'otp' => $otp,
+        'otp_expires_at' => $otp_expires_at,
+    ]);
+
+    $deliveryMethod = $request->input('deliveryMethod', 'email'); // Default to email
+
+    if ($deliveryMethod === 'SMS') {
+        // Send OTP via SMS using Semaphore
+        $message = "Your OTP code is: $otp. It will expire at " . $otp_expires_at->toDateTimeString();
+        $smsResponse = $this->sendSmsViaSemaphore($user->contact_number, $message);
+
+        // Check if status is "pending" or "success"
+        if (isset($smsResponse['response']['status']) &&
+            in_array($smsResponse['response']['status'], ['pending', 'success'])) {
+            return response()->json([
+                'data' => true,
+                'contact_number' => $user->contact_number,
+                'message' => 'OTP sent via SMS',
+                'message_sent_to' => $user->contact_number,
+                'otp_expires_at' => $otp_expires_at->toDateTimeString(),
+            ]);
+        } else {
+            return response()->json([
+                'data' => false,
+                'message' => $smsResponse['message'] ?? 'Failed to send OTP via SMS.',
+                'error' => $smsResponse['error'] ?? null,
+            ], 500);
+        }
+    } else {
+        // Default to email delivery
         Mail::to($user->email)->send(new OTP($otp));
 
         return response()->json([
             'data' => true,
             'email' => $user->email,
-            'message' => 'OTP sent',
+            'message' => 'OTP sent via email',
             'message_sent_to' => $user->email,
             'otp_expires_at' => $otp_expires_at->toDateTimeString(),
         ]);
     }
+}
+
 }

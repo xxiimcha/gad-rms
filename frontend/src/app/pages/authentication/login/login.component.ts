@@ -26,8 +26,12 @@ export class LoginComponent {
 
     login() {
         this.authService.login(this.credentialsForm).subscribe(response => {
-            if(response) {
-                if(response.twoFactorAuth) {
+            if (response) {
+                // Log contact number and email to the console
+                console.log('Contact Number:', response.contact_number);
+                console.log('Email:', response.email);
+    
+                if (response.twoFactorAuth) {
                     this.router.navigate(['app/dashboard']).then(() => {
                         window.location.reload();
                     });
@@ -35,6 +39,9 @@ export class LoginComponent {
                     this.router.navigate(['two-factor-authorization']);
                 }
             }
+        }, error => {
+            this.loginError = true;
+            console.error('Login failed:', error);
         });
-    }
+    }    
 }
