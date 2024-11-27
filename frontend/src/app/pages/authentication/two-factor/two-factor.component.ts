@@ -42,21 +42,15 @@ export class TwoFactorComponent {
             next: response => {
                 this.isLoading = false;
     
+                // Check if the response indicates success
                 if (response && response.data) {
-                    // For SMS, always display success message
-                    if (this.otpDeliveryMethod === 'SMS') {
-                        this.openSnackBar('OTP has been sent to the registered number', 'Close');
-                    } else if (response.response?.status === 'success' || response.response?.status === 'pending') {
-                        // Handle email or other delivery methods
-                        const deliveryChannel = this.otpDeliveryMethod === 'email' ? 'Email' : 'Other';
-                        this.openSnackBar(`OTP successfully sent via ${deliveryChannel}`, 'Close');
-                    } else {
-                        // Handle other statuses for non-SMS methods
-                        this.openSnackBar('Failed to send OTP. Please try again.', 'Close');
-                        console.error('OTP Error Response:', response);
-                    }
+                    const deliveryChannel = this.otpDeliveryMethod === 'email' ? 'Email' : 'SMS';
+                    this.openSnackBar(`OTP has been sent to the registered ${deliveryChannel.toLowerCase()}`, 'Close');
+    
+                    // Optionally log success for debugging
+                    console.log('OTP Response:', response);
                 } else {
-                    // Handle unexpected empty or null responses
+                    // Handle unexpected response structure
                     this.openSnackBar('OTP request was successful but no data returned.', 'Close');
                     console.error('Unexpected Empty OTP Response:', response);
                 }
@@ -85,7 +79,7 @@ export class TwoFactorComponent {
                 this.isLoading = false; // Ensure loading state is reset
             }
         });
-    }    
+    }
 
     // Method to verify OTP
     verifyOtp() {

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
+use App\Mail\OTP;
+
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\Barangay;
@@ -215,54 +217,54 @@ class UserController extends Controller
         return json_decode($output, true); // Return decoded JSON response
     }
 
+
     public function email_generated_session_otp(Request $request)
-{
-    $user = Auth::user();
-    $otp = rand(100000, 999999); // Generate a 6-digit OTP
-    $otp_expires_at = \Carbon\Carbon::now()->addMinutes(1); // OTP expiration time
+    {
+        $user = Auth::user();
+        $otp = rand(100000, 999999); // Generate a 6-digit OTP
+        $otp_expires_at = \Carbon\Carbon::now()->addMinutes(5); // OTP expiration time
 
-    // Save OTP and expiration time in the user's record
-    $user->update([
-        'otp' => $otp,
-        'otp_expires_at' => $otp_expires_at,
-    ]);
+        // Save OTP and expiration time in the user's record
+        $user->update([
+            'otp' => $otp,
+            'otp_expires_at' => $otp_expires_at,
+        ]);
 
-    $deliveryMethod = $request->input('deliveryMethod', 'email'); // Default to email
+        $deliveryMethod = $request->input('deliveryMethod', 'email'); // Default to email
 
-    if ($deliveryMethod === 'SMS') {
-        // Send OTP via SMS using Semaphore
-        $message = "Your OTP code is: $otp. It will expire at " . $otp_expires_at->toDateTimeString();
-        $smsResponse = $this->sendSmsViaSemaphore($user->contact_number, $message);
+        if ($deliveryMethod === 'SMS') {
+            // Send OTP via SMS using Semaphore
+            $message = "Your OTP code is: $otp. Please use this code to log in to your account. The code is valid for 5 minutes only. Do not share this code with anyone. If you did not request this code, please ignore this message.";
+            $smsResponse = $this->sendSmsViaSemaphore($user->contact_number, $message);
 
-        // Check if status is "pending" or "success"
-        if (isset($smsResponse['response']['status']) &&
-            in_array($smsResponse['response']['status'], ['pending', 'success'])) {
+            // Check if response indicates success
+            if ($smsResponse['success'] || isset($smsResponse['response']['status']) && $smsResponse['response']['status'] === 'pending') {
+                return response()->json([
+                    'data' => true,
+                    'contact_number' => $user->contact_number,
+                    'message' => 'OTP sent via SMS',
+                    'message_sent_to' => $user->contact_number,
+                    'otp_expires_at' => $otp_expires_at->toDateTimeString(),
+                ]);
+            } else {
+                return response()->json([
+                    'data' => false,
+                    'message' => $smsResponse['message'] ?? 'Failed to send OTP via SMS.',
+                    'error' => $smsResponse['error'] ?? null,
+                ], 500);
+            }
+        } else {
+            // Default to email delivery
+            Mail::to($user->email)->send(new OTP($otp));
+
             return response()->json([
                 'data' => true,
-                'contact_number' => $user->contact_number,
-                'message' => 'OTP sent via SMS',
-                'message_sent_to' => $user->contact_number,
+                'email' => $user->email,
+                'message' => 'OTP sent via email',
+                'message_sent_to' => $user->email,
                 'otp_expires_at' => $otp_expires_at->toDateTimeString(),
             ]);
-        } else {
-            return response()->json([
-                'data' => false,
-                'message' => $smsResponse['message'] ?? 'Failed to send OTP via SMS.',
-                'error' => $smsResponse['error'] ?? null,
-            ], 500);
         }
-    } else {
-        // Default to email delivery
-        Mail::to($user->email)->send(new OTP($otp));
-
-        return response()->json([
-            'data' => true,
-            'email' => $user->email,
-            'message' => 'OTP sent via email',
-            'message_sent_to' => $user->email,
-            'otp_expires_at' => $otp_expires_at->toDateTimeString(),
-        ]);
     }
-}
 
 }
